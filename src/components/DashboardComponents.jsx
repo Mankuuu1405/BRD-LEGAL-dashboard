@@ -1,8 +1,8 @@
 import React from 'react';
 
-export const StatCard = ({ title, value, trend, color = 'blue', path, onClick }) => (
+export const StatCard = ({ title, value, trend, path, onClick }) => (
   <div 
-    className={`bg-white p-6 rounded-lg shadow-md border-l-4 border-${color}-500 cursor-pointer`}
+    className={`bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-300 cursor-pointer`}
     onClick={() => onClick(path)}
   >
     <h3 className="text-sm font-medium text-gray-500">{title}</h3>

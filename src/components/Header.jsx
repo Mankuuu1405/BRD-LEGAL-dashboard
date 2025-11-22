@@ -3,6 +3,14 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 
+// Helper to get initials from name
+const getInitials = (name) => {
+  if (!name) return "U"; // fallback if name missing
+  const words = name.trim().split(" ");
+  if (words.length === 1) return words[0][0].toUpperCase();
+  return (words[0][0] + words[1][0]).toUpperCase();
+};
+
 const Header = ({ setMobileSidebarOpen }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -13,51 +21,48 @@ const Header = ({ setMobileSidebarOpen }) => {
   };
 
   return (
-    <header className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
+    <header className="bg-white border-b border-gray-200 py-4 px-6 flex justify-between items-center">
       <div className="flex items-center">
         {/* Hamburger only on mobile */}
         <button
-          className="lg:hidden mr-4 text-gray-800"
+          className="lg:hidden mr-4 text-gray-700"
           onClick={() => setMobileSidebarOpen(true)}
         >
           <Bars3Icon className="w-6 h-6" />
         </button>
 
-        <img
-          src="/logo.png"
-          alt="BRD Logo"
-          className="h-10 w-auto"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = "https://via.placeholder.com/40x40?text=BRD";
-          }}
-        />
         <span className="ml-3 text-xl font-semibold text-gray-800">
           BRD Portal
         </span>
       </div>
 
       <div className="flex items-center gap-4">
-        {/* User info: hidden on mobile, visible from md */}
-        <div className="hidden md:text-right md:mr-4 md:flex md:flex-col">
-          <p className="text-sm font-medium text-gray-900">
-            {user?.name || "User"}
-          </p>
-          <p className="text-xs text-gray-500">
-            {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
-          </p>
+        {/* User info */}
+        <div className="hidden md:flex md:items-center md:gap-3 cursor-pointer" onClick={() => navigate("/profile")}>
+          {/* Name and role */}
+          <div className="flex flex-col">
+            <p className="text-gray-900 font-medium text-lg">Welcome, {user?.name || "User"}</p>
+          </div>
+          {/* Avatar */}
+          {user?.profileImage ? (
+            <img
+              src={user.profileImage}
+              alt={user?.name || "User"}
+              className="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-medium text-sm border-2 border-blue-500">
+              {getInitials(user?.name)}
+            </div>
+          )}
+
+          
         </div>
 
-        <button
-          onClick={() => navigate("/profile")}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:shadow-lg"
-        >
-          Profile
-        </button>
-
+        {/* Logout button */}
         <button
           onClick={handleLogout}
-          className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:shadow-lg"
+          className="px-4 py-2 bg-red-300 border-2 border-red-500 text-black rounded-lg hover:bg-red-400 transition"
         >
           Logout
         </button>

@@ -177,7 +177,7 @@ const ProfilePage = () => {
                 </div>
                 <div>
                   <p className="text-gray-500 font-medium mb-1">Role</p>
-                  <p className="text-gray-700">Administrator</p>
+                  <p className="text-gray-700">Legal Officer</p>
                 </div>
                 <div>
                   <p className="text-gray-500 font-medium mb-1">Department</p>

@@ -19,8 +19,8 @@ const SidebarLink = ({ to, children, icon: Icon, onClick }) => (
       `flex items-center px-4 py-3 rounded-lg transition-all duration-200 text-base group
       ${
         isActive
-          ? "bg-white text-gray-900 shadow-md font-medium"
-          : "text-gray-300 hover:bg-gray-800 hover:text-white"
+          ? "bg-blue-50 text-blue-500 shadow-md font-medium"
+          : "text-gray-400 hover:bg-blue-50 hover:text-blue-500"
       }`
     }
   >
@@ -76,44 +76,6 @@ const renderLegalNav = () => (
   </div>
 );
 
-
-  // const renderValuationNav = () => (
-  //   <div className="mb-6">
-  //     <h3 className="px-4 text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
-  //       Valuation
-  //     </h3>
-  //     <ul className="space-y-2">
-  //       <li>
-  //         <SidebarLink
-  //           to="/valuation"
-  //           icon={HomeIcon}
-  //           onClick={() => setMobileSidebarOpen(false)} // close sidebar on mobile
-  //         >
-  //           Dashboard
-  //         </SidebarLink>
-  //       </li>
-  //       <li>
-  //         <SidebarLink
-  //           to="/valuation/field-verifications"
-  //           icon={BuildingLibraryIcon}
-  //           onClick={() => setMobileSidebarOpen(false)}
-  //         >
-  //           Field Verifications
-  //         </SidebarLink>
-  //       </li>
-  //       <li>
-  //         <SidebarLink
-  //           to="/valuation/property-checks"
-  //           icon={ClipboardDocumentCheckIcon}
-  //           onClick={() => setMobileSidebarOpen(false)}
-  //         >
-  //           Property Checks
-  //         </SidebarLink>
-  //       </li>
-  //     </ul>
-  //   </div>
-  // );
-
 const renderNavigation = () => {
     switch (user?.role) {
       case "legal":
@@ -126,9 +88,9 @@ const renderNavigation = () => {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:block w-72 bg-gray-900 text-white min-h-screen fixed left-0 top-0 overflow-y-auto shadow-xl">
-        <div className="sticky top-0 bg-gray-900 z-10 p-6 border-b border-gray-800">
-          <h2 className="text-2xl font-bold text-white">BRD Portal</h2>
+      <aside className="hidden lg:block w-72 bg-white text-gray-400 min-h-screen fixed left-0 top-0 overflow-y-auto border-r border-gray-200">
+        <div className="sticky top-0 bg-white z-10 p-6 border-b border-gray-100">
+          <h2 className="text-2xl font-bold text-black">BRD Portal</h2>
           {user && (
             <p className="text-sm text-gray-400 mt-1">
               {user.role.charAt(0).toUpperCase() + user.role.slice(1)} Dashboard
@@ -138,16 +100,16 @@ const renderNavigation = () => {
 
         <nav className="p-4">
           <div className="mb-6">
-            <h3 className="px-4 text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
+            <h3 className="px-4 text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
               Pages
             </h3>
             <ul className="space-y-2">
               <li>
                 <button
                   onClick={() => setShowAccessDeniedModal(true)}
-                  className="flex items-center px-4 py-3 rounded-lg text-base group text-gray-300 hover:bg-gray-800 hover:text-white w-full text-left"
+                  className="flex items-center px-4 py-3 rounded-lg text-base group text-gray-400 hover:bg-blue-50 hover:text-blue-500 w-full text-left"
                 >
-                  <UserGroupIcon className="w-5 h-5 mr-3 text-gray-400" />
+                  <UserGroupIcon className="w-5 h-5 mr-3" />
                   All Users
                 </button>
               </li>
@@ -159,14 +121,14 @@ const renderNavigation = () => {
 
       {/* Mobile sidebar */}
       <div
-        className={`fixed inset-0 z-50 bg-gray-900 w-64 transform transition-transform duration-300 lg:hidden ${
+        className={`fixed inset-0 z-50 bg-white w-64 transform transition-transform duration-300 lg:hidden ${
           mobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="p-6 border-b border-gray-800 flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-white">BRD Portal</h2>
+        <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-black">BRD Portal</h2>
           <button
-            className="text-gray-400 hover:text-white"
+            className="text-gray-500 hover:text-white"
             onClick={() => setMobileSidebarOpen(false)}
           >
             ✕
@@ -175,7 +137,7 @@ const renderNavigation = () => {
 
         <nav className="p-4">
           <div className="mb-6">
-            <h3 className="px-4 text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
+            <h3 className="px-4 text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
               Pages
             </h3>
             <ul className="space-y-2">
@@ -185,9 +147,9 @@ const renderNavigation = () => {
                     setShowAccessDeniedModal(true);
                     setMobileSidebarOpen(false);
                   }}
-                  className="flex items-center px-4 py-3 rounded-lg text-base group text-gray-300 hover:bg-gray-800 hover:text-white w-full text-left"
+                  className="flex items-center px-4 py-3 rounded-lg text-base group text-gray-500 hover:bg-blue-50 hover:text-blue-500 w-full text-left"
                 >
-                  <UserGroupIcon className="w-5 h-5 mr-3 text-gray-400" />
+                  <UserGroupIcon className="w-5 h-5 mr-3" />
                   All Users
                 </button>
               </li>

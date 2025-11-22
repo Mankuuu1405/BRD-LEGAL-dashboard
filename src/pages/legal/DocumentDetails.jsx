@@ -26,7 +26,7 @@ const DocumentDetails = () => {
       <div className="p-6 text-center">
         <h2 className="text-2xl font-bold text-red-600">Document not found</h2>
         <button
-          className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           onClick={() => navigate("/legal")}
         >
           Back to Dashboard
@@ -100,7 +100,7 @@ const DocumentDetails = () => {
 
         <div className="mt-6">
           <button
-            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             onClick={() => navigate("/legal")}
           >
             Back to Dashboard

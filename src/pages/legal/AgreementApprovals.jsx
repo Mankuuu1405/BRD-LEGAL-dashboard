@@ -114,7 +114,7 @@ const AgreementApprovals = () => {
         </div>
         <div className="flex gap-3">
           <button
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             onClick={handleNewAgreement}
           >
             New Agreement
@@ -293,7 +293,7 @@ const AgreementApprovals = () => {
                           onClick={() =>
                             navigate(`/legal/agreements/review/${agr.id}`)
                           }
-                          className="text-indigo-600 hover:text-indigo-900 mr-3"
+                          className="text-blue-600 hover:text-blue-900 mr-3"
                         >
                           Review
                         </button>
@@ -329,7 +329,7 @@ const AgreementApprovals = () => {
                             state: { agreements },
                           })
                         }
-                        className="text-indigo-600 hover:text-indigo-900"
+                        className="text-blue-600 hover:text-blue-900"
                       >
                         View Details
                       </button>
@@ -399,7 +399,7 @@ const AgreementApprovals = () => {
                       onClick={() =>
                         navigate(`/legal/agreements/review/${agr.id}`)
                       }
-                      className="text-indigo-600 hover:text-indigo-900"
+                      className="text-blue-600 hover:text-blue-900"
                     >
                       Review
                     </button>
@@ -432,7 +432,7 @@ const AgreementApprovals = () => {
     onClick={() =>
       navigate(`/legal/agreements/${agr.id}`, { state: { agreements } })
     }
-    className="text-indigo-600 hover:text-indigo-900"
+    className="text-blue-600 hover:text-blue-900"
   >
     View Details
   </button>

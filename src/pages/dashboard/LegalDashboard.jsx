@@ -51,7 +51,7 @@ const LegalDashboard = () => {
         </div>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
           <button
-            className="w-full sm:w-auto px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
             onClick={handleNewReview}
           >
             Create New Review
@@ -215,7 +215,7 @@ const LegalDashboard = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button
-                      className="text-indigo-600 hover:text-indigo-900 mr-3"
+                      className="text-blue-600 hover:text-blue-900 mr-3"
                       onClick={() => navigate(`/legal/documents/${doc.id}`)}
                     >
                       Review
@@ -274,7 +274,7 @@ const LegalDashboard = () => {
 
               <div className="mt-3 flex gap-3">
                 <button
-                  className="text-indigo-600 text-sm"
+                  className="text-blue-600 text-sm"
                   onClick={() => navigate(`/legal/documents/${doc.id}`)}
                 >
                   Review

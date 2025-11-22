@@ -16,7 +16,7 @@ const AgreementDetails = () => {
         <h2 className="text-xl font-semibold text-gray-900">Agreement Not Found</h2>
         <p className="mt-2 text-gray-600">No agreement found with ID: {id}</p>
         <button
-          className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           onClick={() => navigate("/legal/agreements")}
         >
           Back to Agreements
@@ -60,7 +60,7 @@ const AgreementDetails = () => {
         <div className="flex flex-wrap gap-3 mt-4">
           {agreement.status === "Pending" && (
             <>
-              <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                 Review
               </button>
               <button className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
@@ -80,7 +80,7 @@ const AgreementDetails = () => {
           )}
           {(agreement.status === "Approved" || agreement.status === "Rejected") && (
             <button
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               onClick={() => alert("Already finalized")}
             >
               View Details

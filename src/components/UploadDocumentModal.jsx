@@ -33,7 +33,7 @@ const UploadDocumentModal = ({ isOpen, onClose, onUpload }) => {
             <input
               type="text"
               id="documentType"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               value={documentType}
               onChange={(e) => setDocumentType(e.target.value)}
               placeholder="e.g., Property Document, Income Proof"
@@ -44,7 +44,7 @@ const UploadDocumentModal = ({ isOpen, onClose, onUpload }) => {
             <input
               type="text"
               id="clientName"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               value={clientName}
               onChange={(e) => setClientName(e.target.value)}
               placeholder="e.g., Amit Kumar"
@@ -59,8 +59,8 @@ const UploadDocumentModal = ({ isOpen, onClose, onUpload }) => {
                 file:mr-4 file:py-2 file:px-4
                 file:rounded-md file:border-0
                 file:text-sm file:font-semibold
-                file:bg-indigo-50 file:text-indigo-600
-                hover:file:bg-indigo-100"
+                file:bg-blue-50 file:text-blue-600
+                hover:file:bg-blue-100"
               onChange={handleFileChange}
             />
             {selectedFile && <p className="mt-2 text-sm text-gray-500">Selected file: {selectedFile.name}</p>}
@@ -69,13 +69,13 @@ const UploadDocumentModal = ({ isOpen, onClose, onUpload }) => {
         <div className="mt-6 flex justify-end space-x-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md shadow-sm text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Upload
           </button>

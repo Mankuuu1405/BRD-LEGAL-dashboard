@@ -50,7 +50,7 @@ const NewAgreementModal = ({ isOpen, onClose, onSave }) => {
             <input
               type="text"
               id="agreementType"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               value={agreementType}
               onChange={(e) => setAgreementType(e.target.value)}
               placeholder="e.g., Loan Agreement"
@@ -61,7 +61,7 @@ const NewAgreementModal = ({ isOpen, onClose, onSave }) => {
             <input
               type="text"
               id="client"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               value={client}
               onChange={(e) => setClient(e.target.value)}
               placeholder="e.g., John Doe"
@@ -72,7 +72,7 @@ const NewAgreementModal = ({ isOpen, onClose, onSave }) => {
             <input
               type="number"
               id="amount"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="e.g., 500000"
@@ -82,7 +82,7 @@ const NewAgreementModal = ({ isOpen, onClose, onSave }) => {
             <label htmlFor="priority" className="block text-sm font-medium text-gray-700">Priority</label>
             <select
               id="priority"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
             >
@@ -95,7 +95,7 @@ const NewAgreementModal = ({ isOpen, onClose, onSave }) => {
             <label htmlFor="assignedTo" className="block text-sm font-medium text-gray-700">Assign To</label>
             <select
               id="assignedTo"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               value={assignedTo}
               onChange={(e) => setAssignedTo(e.target.value)}
             >
@@ -109,13 +109,13 @@ const NewAgreementModal = ({ isOpen, onClose, onSave }) => {
         <div className="mt-6 flex justify-end space-x-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md shadow-sm text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Create Agreement
           </button>

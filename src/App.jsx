@@ -19,7 +19,6 @@ import AllUsersPage from "./pages/auth/AllUsersPage.jsx";
 
 // Dashboard root pages (index pages for each department)
 import LegalDashboard from "./pages/dashboard/LegalDashboard.jsx";
-import Dashboard from "./pages/dashboard/Dashboard.jsx";
 
 // Department subpages
 import DocumentValidation from "./pages/legal/DocumentValidation.jsx";
@@ -57,27 +56,6 @@ const router = createBrowserRouter([
   { path: "/signup", element: <SignupPage /> },
   { path: "/all-users", element: <AllUsersPage /> },
 
-  // Dashboard route
-  {
-    element: (
-      <ProtectedRoute
-        allowedRoles={[
-          "sales",
-          "credit",
-          "legal",
-          "valuation",
-          "finance",
-          "compliance",
-        ]}
-      />
-    ),
-    children: [
-      {
-        path: "/dashboard",
-        element: <Dashboard />,
-      },
-    ],
-  },
 
   // Legal routes
   {
