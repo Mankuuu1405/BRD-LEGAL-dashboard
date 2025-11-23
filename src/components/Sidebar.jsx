@@ -8,6 +8,7 @@ import {
   DocumentTextIcon,
   ClipboardDocumentCheckIcon,
   BuildingLibraryIcon,
+  ArrowLeftStartOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 
 const SidebarLink = ({ to, children, icon: Icon, onClick }) => (
@@ -32,51 +33,61 @@ const SidebarLink = ({ to, children, icon: Icon, onClick }) => (
 );
 
 const Sidebar = ({ mobileSidebarOpen, setMobileSidebarOpen }) => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [showAccessDeniedModal, setShowAccessDeniedModal] =
     React.useState(false);
 
-  
-const renderLegalNav = () => (
-  <div className="mb-6">
-    <h3 className="px-4 text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
-      Legal Team
-    </h3>
-    <ul className="space-y-2">
-      <li>
-        <SidebarLink
-          to="/legal"
-          icon={HomeIcon}
-          onClick={() => setMobileSidebarOpen(false)}
-        >
-          Dashboard
-        </SidebarLink>
-      </li>
+  const renderLegalNav = () => (
+    <div className="mb-6">
+      <h3 className="px-4 text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
+        Legal Team
+      </h3>
+      <ul className="space-y-2">
+        <li>
+          <SidebarLink
+            to="/legal"
+            icon={HomeIcon}
+            onClick={() => setMobileSidebarOpen(false)}
+          >
+            Dashboard
+          </SidebarLink>
+        </li>
 
-      <li>
-        <SidebarLink
-          to="/legal/documents"
-          icon={DocumentTextIcon}
-          onClick={() => setMobileSidebarOpen(false)}
-        >
-          Document Validation
-        </SidebarLink>
-      </li>
+        <li>
+          <SidebarLink
+            to="/legal/documents"
+            icon={DocumentTextIcon}
+            onClick={() => setMobileSidebarOpen(false)}
+          >
+            Document Validation
+          </SidebarLink>
+        </li>
 
-      <li>
-        <SidebarLink
-          to="/legal/agreements"
-          icon={ClipboardDocumentCheckIcon}
-          onClick={() => setMobileSidebarOpen(false)}
+        <li>
+          <SidebarLink
+            to="/legal/agreements"
+            icon={ClipboardDocumentCheckIcon}
+            onClick={() => setMobileSidebarOpen(false)}
+          >
+            Agreement Approvals
+          </SidebarLink>
+        </li>
+      </ul>
+      <div className="absolute bottom-6 left-0 w-full px-4">
+        <button
+          onClick={logout}
+          className="flex items-center px-4 py-3 rounded-lg text-base
+               text-red-500 hover:text-red-600 hover:bg-red-50
+               transition-all duration-200 w-full"
         >
-          Agreement Approvals
-        </SidebarLink>
-      </li>
-    </ul>
-  </div>
-);
+          <ArrowLeftStartOnRectangleIcon className="w-5 h-5 mr-3" />
+          Logout
+        </button>
+      </div>
+    </div>
+  );
 
-const renderNavigation = () => {
+  const renderNavigation = () => {
     switch (user?.role) {
       case "legal":
         return renderLegalNav();
@@ -169,4 +180,3 @@ const renderNavigation = () => {
 };
 
 export default Sidebar;
-

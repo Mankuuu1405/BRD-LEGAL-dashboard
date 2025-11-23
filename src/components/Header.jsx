@@ -37,12 +37,18 @@ const Header = ({ setMobileSidebarOpen }) => {
       </div>
 
       <div className="flex items-center gap-4">
-        {/* User info */}
-        <div className="hidden md:flex md:items-center md:gap-3 cursor-pointer" onClick={() => navigate("/profile")}>
-          {/* Name and role */}
+        {/* === USER SECTION (Now visible on MOBILE also) === */}
+        <div
+          className="flex items-center gap-3 cursor-pointer"
+          onClick={() => navigate("/profile")}
+        >
+          {/* Name (hidden on mobile) */}
           <div className="flex flex-col">
-            <p className="text-gray-900 font-medium text-lg">Welcome, {user?.name || "User"}</p>
+            <p className="text-gray-900 font-medium text-lg">
+              Welcome, {user?.name || "User"}
+            </p>
           </div>
+
           {/* Avatar */}
           {user?.profileImage ? (
             <img
@@ -55,17 +61,7 @@ const Header = ({ setMobileSidebarOpen }) => {
               {getInitials(user?.name)}
             </div>
           )}
-
-          
         </div>
-
-        {/* Logout button */}
-        <button
-          onClick={handleLogout}
-          className="px-4 py-2 bg-red-300 border-2 border-red-500 text-black rounded-lg hover:bg-red-400 transition"
-        >
-          Logout
-        </button>
       </div>
     </header>
   );
