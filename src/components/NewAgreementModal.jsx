@@ -36,7 +36,7 @@ const NewAgreementModal = ({ isOpen, onClose, onSave }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex justify-center items-center z-50 px-4">
+    <div className="fixed inset-0  bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 px-4">
       <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 animate-fadeInUp">
         
         {/* Header */}

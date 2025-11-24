@@ -31,7 +31,7 @@ const BulkAssignModal = ({ isOpen, onClose, agreements, onBulkAssign }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
+    <div className="fixed inset-0  bg-black/40 backdrop-blur-sm h-full w-full flex justify-center items-center">
       <div className="bg-white p-8 rounded-lg shadow-xl max-w-2xl mx-auto">
         <h2 className="text-2xl font-bold mb-4 text-gray-900">Bulk Assign Agreements</h2>
         <div className="space-y-4">
