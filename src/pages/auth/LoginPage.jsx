@@ -7,9 +7,15 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
+
+  React.useEffect(() => {
+    const savedEmail = localStorage.getItem("remember_email");
+    if (savedEmail) setEmail(savedEmail);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -26,6 +32,12 @@ const LoginPage = () => {
       if (found.password !== password) {
         setError('Incorrect password.');
         return;
+      }
+
+      if (rememberMe) {
+        localStorage.setItem("remember_email", email);
+      } else {
+        localStorage.removeItem("remember_email");
       }
 
       const userObj = { email: found.email, role: found.role, name: found.name };
@@ -68,9 +80,22 @@ const LoginPage = () => {
             toggleShow={() => setShowPassword(!showPassword)}
           />
 
-          {/* Forgot password */}
-          <div className="mb-6 text-right">
-            <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
+          {/* Remember me + Forgot password */}
+          <div className="flex items-center justify-between mb-4">
+            <label className="flex items-center space-x-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <span className="text-gray-700 text-sm">Remember Me</span>
+            </label>
+
+            <Link
+              to="/forgot-password"
+              className="text-sm text-blue-600 hover:underline"
+            >
               Forgot Password?
             </Link>
           </div>
