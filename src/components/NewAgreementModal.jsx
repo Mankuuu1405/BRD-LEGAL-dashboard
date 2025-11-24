@@ -7,26 +7,21 @@ const NewAgreementModal = ({ isOpen, onClose, onSave }) => {
   const [priority, setPriority] = useState('Medium');
   const [assignedTo, setAssignedTo] = useState('');
 
-  const legalTeamMembers = [
-    'Priya Mehta',
-    'Rahul Sharma',
-    'Amit Singh',
-    'Sneha Reddy',
-  ];
+  const legalTeamMembers = ['Priya Mehta', 'Rahul Sharma', 'Amit Singh', 'Sneha Reddy'];
 
   const handleSubmit = () => {
     if (agreementType && client && amount && assignedTo) {
       onSave({
         id: `AGR-${Math.floor(Math.random() * 10000)}`,
         type: agreementType,
-        client: client,
+        client,
         amount: `₹${parseFloat(amount).toLocaleString()}`,
         submittedDate: new Date().toISOString().slice(0, 10),
-        priority: priority,
+        priority,
         status: 'Pending',
-        assignedTo: assignedTo,
+        assignedTo,
       });
-      // Reset form fields
+
       setAgreementType('');
       setClient('');
       setAmount('');
@@ -41,88 +36,122 @@ const NewAgreementModal = ({ isOpen, onClose, onSave }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
-      <div className="bg-white p-8 rounded-lg shadow-xl max-w-md mx-auto">
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">Create New Agreement</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex justify-center items-center z-50 px-4">
+      <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 animate-fadeInUp">
+        
+        {/* Header */}
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6 text-center">
+          Create New Agreement
+        </h2>
+
+        {/* Form */}
         <div className="space-y-4">
-          <div>
-            <label htmlFor="agreementType" className="block text-sm font-medium text-gray-700">Agreement Type</label>
-            <input
-              type="text"
-              id="agreementType"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={agreementType}
-              onChange={(e) => setAgreementType(e.target.value)}
-              placeholder="e.g., Loan Agreement"
-            />
-          </div>
-          <div>
-            <label htmlFor="client" className="block text-sm font-medium text-gray-700">Client Name</label>
-            <input
-              type="text"
-              id="client"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={client}
-              onChange={(e) => setClient(e.target.value)}
-              placeholder="e.g., John Doe"
-            />
-          </div>
-          <div>
-            <label htmlFor="amount" className="block text-sm font-medium text-gray-700">Amount (₹)</label>
-            <input
-              type="number"
-              id="amount"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="e.g., 500000"
-            />
-          </div>
-          <div>
-            <label htmlFor="priority" className="block text-sm font-medium text-gray-700">Priority</label>
-            <select
-              id="priority"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={priority}
-              onChange={(e) => setPriority(e.target.value)}
-            >
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High">High</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="assignedTo" className="block text-sm font-medium text-gray-700">Assign To</label>
-            <select
-              id="assignedTo"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={assignedTo}
-              onChange={(e) => setAssignedTo(e.target.value)}
-            >
-              <option value="">Select Assignee</option>
-              {legalTeamMembers.map((member) => (
-                <option key={member} value={member}>{member}</option>
-              ))}
-            </select>
-          </div>
+          {/* Agreement Type */}
+          <InputField
+            label="Agreement Type"
+            value={agreementType}
+            placeholder="e.g., Loan Agreement"
+            onChange={(e) => setAgreementType(e.target.value)}
+          />
+
+          {/* Client */}
+          <InputField
+            label="Client Name"
+            value={client}
+            placeholder="e.g., John Doe"
+            onChange={(e) => setClient(e.target.value)}
+          />
+
+          {/* Amount */}
+          <InputField
+            label="Amount (₹)"
+            type="number"
+            value={amount}
+            placeholder="e.g., 500000"
+            onChange={(e) => setAmount(e.target.value)}
+          />
+
+          {/* Priority */}
+          <SelectField
+            label="Priority"
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            options={['Low', 'Medium', 'High']}
+          />
+
+          {/* Assign To */}
+          <SelectField
+            label="Assign To"
+            value={assignedTo}
+            onChange={(e) => setAssignedTo(e.target.value)}
+            options={legalTeamMembers}
+            placeholder="Select Assignee"
+          />
         </div>
-        <div className="mt-6 flex justify-end space-x-3">
+
+        {/* Buttons */}
+        <div className="mt-8 flex justify-end space-x-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-all"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md transition-all"
           >
             Create Agreement
           </button>
         </div>
       </div>
+
+      {/* Animations */}
+      <style>{`
+        .animate-fadeInUp {
+          animation: fadeInUp 0.25s ease-out;
+        }
+        @keyframes fadeInUp {
+          0% { opacity: 0; transform: translateY(20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };
 
 export default NewAgreementModal;
+
+
+/* Reusable Clean Input Component */
+const InputField = ({ label, type = "text", value, onChange, placeholder }) => (
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+    <input
+      type={type}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm 
+                 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+    />
+  </div>
+);
+
+/* Reusable Clean Select Component */
+const SelectField = ({ label, value, onChange, options, placeholder }) => (
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+    <select
+      value={value}
+      onChange={onChange}
+      className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm 
+                 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+    >
+      {placeholder && <option value="">{placeholder}</option>}
+      {options.map((opt) => (
+        <option key={opt} value={opt}>{opt}</option>
+      ))}
+    </select>
+  </div>
+);

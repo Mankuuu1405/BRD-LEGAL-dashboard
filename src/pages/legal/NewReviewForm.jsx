@@ -12,7 +12,7 @@ const NewReviewForm = () => {
     // Here you would typically send this data to your backend API
     console.log('New Review Submitted:', { reviewTitle, reviewDescription, assignedTo });
     alert('Review submitted successfully!');
-    navigate('/legal/agreement-approvals'); // Navigate back to the approvals page or a success page
+    navigate('/legal'); // Navigate back to the approvals page or a success page
   };
 
   return (
@@ -56,7 +56,7 @@ const NewReviewForm = () => {
           <div className="flex justify-end space-x-3">
             <button
               type="button"
-              onClick={() => navigate('/legal/agreement-approvals')}
+              onClick={() => navigate('/legal')}
               className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               Cancel

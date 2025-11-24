@@ -428,16 +428,17 @@ const AgreementApprovals = () => {
                   </>
                 )}
                 {(agr.status === "Approved" || agr.status === "Rejected") && (
-  <button
-    onClick={() =>
-      navigate(`/legal/agreements/${agr.id}`, { state: { agreements } })
-    }
-    className="text-blue-600 hover:text-blue-900"
-  >
-    View Details
-  </button>
-)}
-
+                  <button
+                    onClick={() =>
+                      navigate(`/legal/agreements/${agr.id}`, {
+                        state: { agreements },
+                      })
+                    }
+                    className="text-blue-600 hover:text-blue-900"
+                  >
+                    View Details
+                  </button>
+                )}
               </div>
             </div>
           ))}

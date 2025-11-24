@@ -293,7 +293,7 @@ const LegalDashboard = () => {
 
       <GenerateReportModal
         isOpen={isGenerateReportModalOpen}
-        onClose={() => setGenerateReportModalOpen(false)}
+        onRequestClose={() => setGenerateReportModalOpen(false)}
       />
     </div>
   );

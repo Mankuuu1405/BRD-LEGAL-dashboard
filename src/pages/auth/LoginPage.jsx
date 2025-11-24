@@ -1,5 +1,5 @@
 // src/pages/auth/LoginPage.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -12,7 +12,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const savedEmail = localStorage.getItem("remember_email");
     if (savedEmail) setEmail(savedEmail);
   }, []);
