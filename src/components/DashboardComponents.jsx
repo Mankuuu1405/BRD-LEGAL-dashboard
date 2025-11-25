@@ -1,21 +1,57 @@
-import React from 'react';
+import React from "react";
+import { UsersIcon, ClipboardDocumentCheckIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 
-export const StatCard = ({ title, value, trend, path, onClick }) => (
-  <div 
-    className={`bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-300 cursor-pointer`}
-    onClick={() => onClick(path)}
-  >
-    <h3 className="text-sm font-medium text-gray-500">{title}</h3>
-    <div className="mt-2 flex items-baseline">
-      <p className="text-2xl font-semibold text-gray-900">{value}</p>
-      {trend && (
-        <span className={`ml-2 text-sm ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-          {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}%
-        </span>
-      )}
+const primary = {
+  50: "#eff6ff",
+  600: "#2563eb",
+};
+
+export const StatCard = ({ icon: Icon, title, value, trend }) => {
+  return (
+    <div className="bg-white rounded-xl shadow-card p-4 border border-gray-100 cursor-pointer">
+      <div className="flex items-center justify-between">
+        <div className="h-9 w-9 rounded-lg bg-primary-50 text-primary-700 grid place-items-center">
+          {Icon && <Icon className="h-5 w-5" style={{ color: primary[600] }} />}
+        </div>
+        {trend != null && (
+          <div className={`text-sm font-semibold ${trend >= 0 ? "text-green-600" : "text-red-600"}`}>
+            {trend > 0 ? "↑" : "↓"} {Math.abs(trend)}%
+          </div>
+        )}
+      </div>
+      <div className="mt-3 text-2xl font-semibold">{value}</div>
+      <div className="text-sm text-gray-600">{title}</div>
     </div>
-  </div>
-);
+  );
+};
+
+
+
+
+export const DocumentValidationStatCard = ({ title, mainValue, subText, trendValue, trendType, icon: Icon }) => {
+  const trendColor =
+    trendType === "up" ? "text-green-600" : trendType === "down" ? "text-red-600" : "";
+
+  return (
+    <div className="bg-white rounded-lg shadow-md p-4 border border-gray-100 cursor-pointer">
+      <div className="flex items-center justify-between">
+        <div className="h-9 w-9 rounded-lg bg-blue-50 text-blue-700 grid place-items-center">
+          {Icon && <Icon className="h-5 w-5 text-blue-600" />} {/* ✅ use capitalized Icon */}
+        </div>
+        {trendValue != null && (
+          <div className={`text-sm font-semibold ${trendColor}`}>
+            {trendType === "up" ? "↑" : trendType === "down" ? "↓" : ""} {Math.abs(trendValue)}%
+          </div>
+        )}
+      </div>
+      <div className="mt-3 text-2xl font-semibold">{mainValue}</div>
+      <div className="text-sm text-gray-600">{title}</div>
+      {subText && <div className="text-xs text-gray-500 mt-1">{subText}</div>}
+    </div>
+  );
+};
+
+
 
 export const SimpleTable = ({ headers, data, onRowSelect = () => {}, selectedRows = [] }) => (
   <div className="bg-white shadow-md rounded-lg overflow-hidden">
@@ -79,3 +115,14 @@ export const DashboardMetrics = ({ items, onClick }) => (
     ))}
   </div>
 );
+
+export const DocumentVerificationMetrics = ({ items }) => {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      {items.map((item, idx) => (
+        <DocumentValidationStatCard key={idx} {...item} />
+      ))}
+    </div>
+  );
+};
+

@@ -1,19 +1,25 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardMetrics } from "../../components/DashboardComponents";
-import { LineChart, BarChart, DoughnutChart } from "../../components/Charts";
+import { LineChart, BarChart, PieChart } from "../../components/Charts";
 import useApi from "./useApi";
 import GenerateReportModal from "../../components/GenerateReportModal";
+import {
+  ClockIcon,
+  CheckCircleIcon,
+  ShieldCheckIcon,
+  ArrowPathIcon,
+} from "@heroicons/react/24/outline";
 
 const fetchDashboardData = async () => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
         metrics: [
-          { title: "Pending Reviews", value: "28", trend: -5, color: "yellow" },
-          { title: "Approved Today", value: "12", trend: 4.2, color: "green" },
-          { title: "Average TAT", value: "1.2 days", trend: -8.5, color: "blue" },
-          { title: "Compliance Score", value: "96%", trend: 2.1, color: "green" },
+          { title: "Pending Reviews", value: "28", trend: -5, color: "yellow", icon: ClockIcon, },
+          { title: "Approved Today", value: "12", trend: 4.2, color: "green", icon: CheckCircleIcon },
+          { title: "Average TAT", value: "1.2 days", trend: -8.5, color: "blue", icon: ArrowPathIcon },
+          { title: "Compliance Score", value: "96%", trend: 2.1, color: "green", icon: ShieldCheckIcon },
         ],
         recentDocuments: [
           { id: "DOC-2001", type: "Loan Agreement", status: "Under Review", priority: "High" },
@@ -118,7 +124,24 @@ const LegalDashboard = () => {
     {/* Document Distribution */}
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h3 className="text-lg font-semibold mb-4">Document Distribution</h3>
-      <DoughnutChart
+      <PieChart
+            data={{
+          labels: ["Loan Agreements", "Property Papers", "Collateral Docs", "Income Proofs", "Other"],
+          datasets: [
+            {
+              data: [35, 25, 20, 15, 5],
+              backgroundColor: [
+                "rgba(79, 70, 229, 0.8)",
+                "rgba(34, 197, 94, 0.8)",
+                "rgba(234, 179, 8, 0.8)",
+                "rgba(239, 68, 68, 0.8)",
+                "rgba(107, 114, 128, 0.8)",
+              ],
+            },
+          ],
+        }}
+          />
+      {/* <DoughnutChart
         data={{
           labels: ["Loan Agreements", "Property Papers", "Collateral Docs", "Income Proofs", "Other"],
           datasets: [
@@ -134,7 +157,7 @@ const LegalDashboard = () => {
             },
           ],
         }}
-      />
+      /> */}
     </div>
 
     {/* Compliance Score Trend (New Section) */}

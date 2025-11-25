@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UploadDocumentModal from '../../components/UploadDocumentModal';
+import { StatCard, DocumentVerificationMetrics } from "../../components/DashboardComponents";
+import { DocumentDuplicateIcon, ClockIcon, EyeIcon, CheckBadgeIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
 const DocumentValidation = () => {
   const navigate = useNavigate();
@@ -104,29 +106,45 @@ const DocumentValidation = () => {
         </button>
       </div>
 
+      
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-sm font-medium text-gray-500">Total Documents</h3>
-          <p className="text-2xl font-bold text-gray-900 mt-2">156</p>
-          <p className="text-xs text-gray-600 mt-1">↑ 23 new this week</p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-sm font-medium text-gray-500">Pending Review</h3>
-          <p className="text-2xl font-bold text-yellow-600 mt-2">28</p>
-          <p className="text-xs text-gray-600 mt-1">Average wait: 1.2 days</p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-sm font-medium text-gray-500">Validated</h3>
-          <p className="text-2xl font-bold text-green-600 mt-2">112</p>
-          <p className="text-xs text-green-600 mt-1">↑ 92% success rate</p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-sm font-medium text-gray-500">Issues Found</h3>
-          <p className="text-2xl font-bold text-red-600 mt-2">16</p>
-          <p className="text-xs text-red-600 mt-1">↓ 12% from last week</p>
-        </div>
-      </div>
+<DocumentVerificationMetrics
+  items={[
+    {
+      title: "Total Documents",
+      mainValue: documents.length,
+      subText: "New this week: 23",
+      trendValue: 23,
+      trendType: "up",
+      icon: DocumentDuplicateIcon,
+    },
+    {
+      title: "Pending Review",
+      mainValue: documents.filter(doc => doc.status === "Pending").length,
+      subText: "Average wait: 1.2 days",
+      trendValue: 5, // example trend %
+      trendType: "up",
+      icon: EyeIcon,
+    },
+    {
+      title: "Validated",
+      mainValue: documents.filter(doc => doc.status === "Valid").length,
+      subText: "Success rate: 92%",
+      trendValue: 92,
+      trendType: "up",
+      icon: CheckBadgeIcon,
+    },
+    {
+      title: "Issues Found",
+      mainValue: documents.filter(doc => doc.status === "Invalid").length,
+      subText: "↓ 12% from last week",
+      trendValue: -12,
+      trendType: "down",
+      icon: ExclamationTriangleIcon,
+    },
+  ]}
+/>
+
 
       {/* Filters */}
       <div className="bg-white p-6 rounded-lg shadow-md">

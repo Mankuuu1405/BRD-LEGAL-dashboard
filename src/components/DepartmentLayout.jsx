@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import Sidebar from './Sidebar';
-import Header from './Header';
-import { MessageProvider } from '../context/MessageContext';
-import GlobalMessageDisplay from './GlobalMessageDisplay';
+import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
+import Sidebar from "./Sidebar";
+import Header from "./Header";
+import { MessageProvider } from "../context/MessageContext";
+import GlobalMessageDisplay from "./GlobalMessageDisplay";
 
 const DepartmentLayout = () => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -11,21 +11,22 @@ const DepartmentLayout = () => {
   return (
     <MessageProvider>
       <div className="flex flex-col min-h-screen">
-
         {/* HEADER */}
-        <div className="lg:pl-72"> 
+        <div className="lg:pl-72">
           {/* Only add padding on large screens */}
           <Header setMobileSidebarOpen={setMobileSidebarOpen} />
         </div>
 
         {/* BODY */}
         <div className="flex">
-
           {/* SIDEBAR */}
-          <Sidebar mobileSidebarOpen={mobileSidebarOpen} setMobileSidebarOpen={setMobileSidebarOpen} />
+          <Sidebar
+            mobileSidebarOpen={mobileSidebarOpen}
+            setMobileSidebarOpen={setMobileSidebarOpen}
+          />
 
           {/* MAIN CONTENT */}
-          <main className="flex-1 bg-gray-50 min-h-screen lg:pl-72">
+          <main className="flex-1 bg-gray-50 min-h-screen lg:pl-72 pt-16">
             {/* padding only on large */}
             <div className="container mx-auto p-6">
               <Outlet />

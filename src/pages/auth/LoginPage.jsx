@@ -1,164 +1,177 @@
 // src/pages/auth/LoginPage.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from "react-router-dom";
+import { ShieldCheckIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 
-const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const savedEmail = localStorage.getItem("remember_email");
-    if (savedEmail) setEmail(savedEmail);
-  }, []);
+  const primary = {
+    50: "#eff6ff",
+    200: "#bfdbfe",
+    300: "#93c5fd",
+    500: "#3b82f6",
+    600: "#2563eb",
+    700: "#1d4ed8",
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setError(null);
 
-    try {
-      const usersRaw = localStorage.getItem('mock_users');
-      const users = usersRaw ? JSON.parse(usersRaw) : [];
-      const found = users.find(u => u.email === email);
-      if (!found) {
-        setError('No account found for this email. Please sign up.');
-        return;
-      }
-      if (found.password !== password) {
-        setError('Incorrect password.');
-        return;
-      }
-
-      if (rememberMe) {
-        localStorage.setItem("remember_email", email);
-      } else {
-        localStorage.removeItem("remember_email");
-      }
-
-      const userObj = { email: found.email, role: found.role, name: found.name };
-      login(userObj);
-      navigate(`/${found.role}`);
-    } catch {
-      login({ email, role: 'sales' });
-      navigate('/sales');
+    const usersRaw = localStorage.getItem("mock_users");
+    const users = usersRaw ? JSON.parse(usersRaw) : [];
+    const found = users.find((u) => u.email === email);
+    if (!found) {
+      setError("No account found for this email. Please sign up.");
+      return;
     }
+    if (found.password !== password) {
+      setError("Incorrect password.");
+      return;
+    }
+
+    if (rememberMe) {
+      localStorage.setItem("remember_email", email);
+    } else {
+      localStorage.removeItem("remember_email");
+    }
+
+    login({ email: found.email, role: found.role, name: found.name });
+    navigate(`/${found.role}`);
   };
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen bg-gray-50 overflow-hidden">
-     
-      <div className="relative z-10 w-full max-w-md p-8 bg-white rounded-2xl shadow-xl">
-        <h2 className="text-2xl font-bold text-center mb-2 text-gray-800">Login to Your Account</h2>
-        <p className="text-center text-gray-500 mb-6 text-sm">Sign In to join the Legal Dashboard</p>
+    <div className="min-h-screen bg-white grid place-items-center">
+      <div
+        className="w-full max-w-md rounded-2xl shadow-card p-6 border bg-white"
+        style={{ borderColor: primary[200] }}
+      >
+        <div className="grid place-items-center">
+          <div
+            className="h-12 w-12 rounded-full grid place-items-center"
+            style={{ background: primary[50], color: primary[600] }}
+          >
+            <ShieldCheckIcon className="h-6 w-6" />
+          </div>
 
-        <form onSubmit={handleSubmit}>
-          {/* Email */}
-          <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-1">Email</label>
+          <h2 className="mt-4 text-3xl font-semibold text-gray-900 text-center">
+            Legal Dashboard
+          </h2>
+
+          <p className="mt-1 text-sm text-gray-600 text-center">
+            Sign in to access your dashboard
+          </p>
+        </div>
+
+        {error && (
+          <div
+            className="mt-3 rounded-lg p-3 text-sm"
+            style={{
+              background: primary[50],
+              color: primary[700],
+              border: `1px solid ${primary[200]}`,
+            }}
+          >
+            {error}
+          </div>
+        )}
+
+        {/* Email */}
+        <label className="block mt-6">
+          <span className="text-sm text-gray-900">Email</span>
+          <div className="mt-1 relative">
             <input
               type="email"
+              placeholder="admin@valuation.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
-              placeholder="your@email.com"
+              className="w-full h-11 rounded-xl px-3 pr-10 border focus:outline-none"
+              style={{
+                borderColor: primary[200],
+                boxShadow: `0 0 0 0px`,
+              }}
             />
-          </div>
-
-          {/* Password */}
-          <PasswordField
-            label="Password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            show={showPassword}
-            toggleShow={() => setShowPassword(!showPassword)}
-          />
-
-          {/* Remember me + Forgot password */}
-          <div className="flex items-center justify-between mb-4">
-            <label className="flex items-center space-x-2 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <span className="text-gray-700 text-sm">Remember Me</span>
-            </label>
-
-            <Link
-              to="/forgot-password"
-              className="text-sm text-blue-600 hover:underline"
+            <div
+              className="absolute right-3 top-1/2 -translate-y-1/2"
+              style={{ color: primary[500] }}
             >
-              Forgot Password?
-            </Link>
+              <EnvelopeIcon className="h-5 w-5" />
+            </div>
           </div>
+        </label>
 
-          {/* Error message */}
-          {error && <p className="text-center text-sm text-red-500 mb-4">{error}</p>}
+        {/* Password */}
+        <label className="block mt-4">
+          <span className="text-sm text-gray-900">Password</span>
+          <div className="mt-1 relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full h-11 rounded-xl px-3 pr-20 border focus:outline-none"
+              style={{ borderColor: primary[200] }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium"
+              style={{ color: primary[600] }}
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
+        </label>
 
-          {/* Submit */}
+        {/* Remember + Forgot */}
+        <div className="mt-3 flex items-center justify-between">
+          <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300"
+            />
+            <span>Remember me</span>
+          </label>
+
+          <Link
+            to="/forgot-password"
+            style={{ color: primary[600] }}
+            className="text-sm"
+          >
+            Forgot password?
+          </Link>
+        </div>
+
+        {/* Button */}
+        <div className="mt-6">
           <button
             type="submit"
-            className="w-full py-3 text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors font-medium"
+            onClick={handleSubmit}
+            className="h-11 w-full rounded-xl text-white shadow transition"
+            style={{ background: primary[600] }}
           >
-            Login
+            Sign In
           </button>
-        </form>
+        </div>
 
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Don't have an account?{' '}
-          <Link to="/signup" className="text-blue-600 hover:underline font-medium">
-            Sign Up
-          </Link>
+        <p className="mt-4 text-center text-sm text-gray-500">
+          Demo: Use any email and password to log in
         </p>
-      </div>
 
-      <style>{`
-        .animate-blob { animation: blob 8s infinite; }
-        .animation-delay-2000 { animation-delay: 2s; }
-        @keyframes blob {
-          0% { transform: translate(0px,0px) scale(1); }
-          33% { transform: translate(30px,-20px) scale(1.05); }
-          66% { transform: translate(-20px,20px) scale(0.95); }
-          100% { transform: translate(0px,0px) scale(1); }
-        }
-        .blur-3xl { filter: blur(60px); }
-      `}</style>
-    </div>
-  );
-};
-
-export default LoginPage;
-
-// Reusable PasswordField matching SignupPage design
-function PasswordField({ label, name, value, onChange, show, toggleShow }) {
-  return (
-    <div className="mb-4 relative">
-      <label className="block text-gray-700 font-medium mb-1">{label}</label>
-      <div className="relative">
-        <input
-          type={show ? 'text' : 'password'}
-          name={name}
-          value={value}
-          onChange={onChange}
-          className="w-full px-4 py-3 pr-20 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
-          placeholder="Enter your password"
-          required
-        />
-        <button
-          type="button"
-          onClick={toggleShow}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 font-medium focus:outline-none"
-        >
-          {show ? 'Hide' : 'Show'}
-        </button>
+        <p className="mt-2 text-center text-sm">
+          <span className="text-gray-700">Don't have an account? </span>
+          <Link to="/signup" style={{ color: primary[600] }}>Sign Up</Link>
+        </p>
       </div>
     </div>
   );

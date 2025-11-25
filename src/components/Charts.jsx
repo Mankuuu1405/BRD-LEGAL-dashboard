@@ -11,7 +11,7 @@ import {
   Legend,
   ArcElement,
 } from 'chart.js';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import { Line, Bar, Doughnut, Pie } from 'react-chartjs-2';
 
 // Register ChartJS components
 ChartJS.register(
@@ -32,13 +32,8 @@ export const LineChart = ({ data, title, height = 300 }) => {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: !!title,
-        text: title,
-      },
+      legend: { position: 'top' },
+      title: { display: !!title, text: title },
     },
   };
 
@@ -55,13 +50,8 @@ export const BarChart = ({ data, title, height = 300 }) => {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: !!title,
-        text: title,
-      },
+      legend: { position: 'top' },
+      title: { display: !!title, text: title },
     },
   };
 
@@ -72,25 +62,20 @@ export const BarChart = ({ data, title, height = 300 }) => {
   );
 };
 
-// Doughnut Chart Component
-export const DoughnutChart = ({ data, title, height = 300 }) => {
+// Pie Chart Component (solid chart)
+export const PieChart = ({ data, title, height = 300 }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: 'right',
-      },
-      title: {
-        display: !!title,
-        text: title,
-      },
+      legend: { position: 'right' },
+      title: { display: !!title, text: title },
     },
   };
 
   return (
     <div style={{ height }}>
-      <Doughnut options={options} data={data} />
+      <Pie options={options} data={data} />
     </div>
   );
 };

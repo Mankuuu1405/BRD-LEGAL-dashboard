@@ -3,6 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { BarChart } from "../../components/Charts";
 import BulkAssignModal from "../../components/BulkAssignModal";
 import NewAgreementModal from "../../components/NewAgreementModal";
+import { DocumentVerificationMetrics, } from "../../components/DashboardComponents";
+import {
+  DocumentTextIcon,
+  ClockIcon,
+  CheckBadgeIcon,
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/outline";
 
 const AgreementApprovals = () => {
   const navigate = useNavigate();
@@ -128,33 +135,42 @@ const AgreementApprovals = () => {
         </div>
       </div>
 
-      {/* Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-sm font-medium text-gray-500">
-            Total Agreements
-          </h3>
-          <p className="text-2xl font-bold text-gray-900 mt-2">124</p>
-          <p className="text-xs text-gray-600 mt-1">↑ 15 this month</p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-sm font-medium text-gray-500">Pending Review</h3>
-          <p className="text-2xl font-bold text-yellow-600 mt-2">28</p>
-          <p className="text-xs text-gray-600 mt-1">Average TAT: 2.3 days</p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-sm font-medium text-gray-500">Approved</h3>
-          <p className="text-2xl font-bold text-green-600 mt-2">82</p>
-          <p className="text-xs text-green-600 mt-1">↑ 95% approval rate</p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-sm font-medium text-gray-500">High Priority</h3>
-          <p className="text-2xl font-bold text-red-600 mt-2">12</p>
-          <p className="text-xs text-red-600 mt-1">
-            Requires immediate attention
-          </p>
-        </div>
-      </div>
+      <DocumentVerificationMetrics
+        items={[
+          {
+            title: "Total Agreements",
+            mainValue: 124,
+            subText: "15 this month",
+            trendValue: 15,
+            trendType: "up",
+            icon: DocumentTextIcon,
+          },
+          {
+            title: "Pending Review",
+            mainValue: 28,
+            subText: "Average TAT: 2.3 days",
+            trendValue: 5, // example trend %
+            trendType: "up",
+            icon: ClockIcon,
+          },
+          {
+            title: "Approved",
+            mainValue: 82,
+            subText: "95% approval rate",
+            trendValue: 92,
+            trendType: "up",
+            icon: CheckBadgeIcon,
+          },
+          {
+            title: "High Priority",
+            mainValue: 12,
+            subText: "Requires immediate attention",
+            trendValue: -12,
+            trendType: "down",
+            icon: ExclamationTriangleIcon,
+          },
+        ]}
+      />
 
       {/* Approval Timeline */}
       <div className="bg-white p-6 rounded-lg shadow-md">
