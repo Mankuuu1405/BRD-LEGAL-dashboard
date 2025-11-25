@@ -30,8 +30,8 @@ const GenerateReportModal = ({ isOpen, onRequestClose }) => {
       isOpen={isOpen}
       onRequestClose={onRequestClose}
       contentLabel="Generate New Report"
-      className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto mt-20"
-      overlayClassName="fixed inset-0  bg-black/40 backdrop-blur-sm"
+      className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto mt-20 relative z-50"
+      overlayClassName="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" 
     >
       <h2 className="text-xl font-bold mb-4">Generate New Report</h2>
       

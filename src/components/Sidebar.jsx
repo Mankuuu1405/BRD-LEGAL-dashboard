@@ -157,7 +157,7 @@ const Sidebar = ({ mobileSidebarOpen, setMobileSidebarOpen }) => {
       >
         <div className="p-4 border-b border-gray-200 flex items-center gap-3">
           <div
-            className="h-8 w-8 rounded-xl grid place-items-center flex-shrink-0"
+            className="h-8 w-8 rounded-xl grid place-items-center shrink-0"
             style={{ backgroundColor: primary[600], color: "white" }}
           >
             <ShieldCheckIcon className="h-4 w-4" />
@@ -171,7 +171,7 @@ const Sidebar = ({ mobileSidebarOpen, setMobileSidebarOpen }) => {
           </div>
 
           <button
-            className="ml-2 text-gray-500 hover:text-black flex-shrink-0"
+            className="ml-2 text-gray-500 hover:text-black shrink-0"
             onClick={() => setMobileSidebarOpen(false)}
           >
             ✕
