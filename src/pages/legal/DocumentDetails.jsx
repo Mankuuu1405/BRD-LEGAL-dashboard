@@ -4,15 +4,79 @@ import { useParams, useNavigate } from "react-router-dom";
 
 // Combined dataset
 const demoDocuments = [
-  { id: "DOC-2001", type: "Loan Agreement", status: "Under Review", priority: "High", submittedBy: "John Doe", reviewedBy: "N/A", tat: "1.8 days" },
-  { id: "DOC-2002", type: "Property Papers", status: "Pending", priority: "Medium", submittedBy: "Jane Smith", reviewedBy: "N/A", tat: "2.0 days" },
-  { id: "DOC-2003", type: "Collateral Docs", status: "Approved", priority: "High", submittedBy: "Alice Brown", reviewedBy: "Legal Team", tat: "1.5 days" },
-  { id: "DOC-2004", type: "Income Proof", status: "Rejected", priority: "Low", submittedBy: "Bob White", reviewedBy: "Legal Team", tat: "2.5 days" },
+  {
+    id: "DOC-2001",
+    type: "Loan Agreement",
+    status: "Under Review",
+    priority: "High",
+    submittedBy: "John Doe",
+    reviewedBy: "N/A",
+    tat: "1.8 days",
+  },
+  {
+    id: "DOC-2002",
+    type: "Property Papers",
+    status: "Pending",
+    priority: "Medium",
+    submittedBy: "Jane Smith",
+    reviewedBy: "N/A",
+    tat: "2.0 days",
+  },
+  {
+    id: "DOC-2003",
+    type: "Collateral Docs",
+    status: "Approved",
+    priority: "High",
+    submittedBy: "Alice Brown",
+    reviewedBy: "Legal Team",
+    tat: "1.5 days",
+  },
+  {
+    id: "DOC-2004",
+    type: "Income Proof",
+    status: "Rejected",
+    priority: "Low",
+    submittedBy: "Bob White",
+    reviewedBy: "Legal Team",
+    tat: "2.5 days",
+  },
   // New documents
-  { id: 'DOC-2101', name: 'Property Sale Deed', type: 'Property Document', client: 'Amit Kumar', uploadDate: '2025-11-03', status: 'Pending', issues: [] },
-  { id: 'DOC-2102', name: 'Income Tax Returns', type: 'Income Proof', client: 'Priya Sharma', uploadDate: '2025-11-03', status: 'Invalid', issues: ['Incomplete information', 'Missing signatures'] },
-  { id: 'DOC-2103', name: 'Bank Statements', type: 'Financial Document', client: 'Rahul Verma', uploadDate: '2025-11-02', status: 'Valid', issues: [] },
-  { id: 'DOC-2104', name: 'Collateral Agreement', type: 'Legal Document', client: 'Sneha Reddy', uploadDate: '2025-11-02', status: 'Pending', issues: [] },
+  {
+    id: "DOC-2101",
+    name: "Property Sale Deed",
+    type: "Property Document",
+    client: "Amit Kumar",
+    uploadDate: "2025-11-03",
+    status: "Pending",
+    issues: [],
+  },
+  {
+    id: "DOC-2102",
+    name: "Income Tax Returns",
+    type: "Income Proof",
+    client: "Priya Sharma",
+    uploadDate: "2025-11-03",
+    status: "Invalid",
+    issues: ["Incomplete information", "Missing signatures"],
+  },
+  {
+    id: "DOC-2103",
+    name: "Bank Statements",
+    type: "Financial Document",
+    client: "Rahul Verma",
+    uploadDate: "2025-11-02",
+    status: "Valid",
+    issues: [],
+  },
+  {
+    id: "DOC-2104",
+    name: "Collateral Agreement",
+    type: "Legal Document",
+    client: "Sneha Reddy",
+    uploadDate: "2025-11-02",
+    status: "Pending",
+    issues: [],
+  },
 ];
 
 const DocumentDetails = () => {
@@ -52,17 +116,24 @@ const DocumentDetails = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
-
       <div className="bg-white rounded-lg shadow-md p-6">
         <h1 className="text-2xl font-bold mb-2">{doc.name || doc.type}</h1>
 
         {/* Status & Priority */}
         <div className="flex flex-wrap gap-3 mb-4">
-          <span className={`px-3 py-1 rounded-full text-sm font-semibold ${statusColors[doc.status]}`}>
+          <span
+            className={`px-3 py-1 rounded-full text-sm font-semibold ${
+              statusColors[doc.status]
+            }`}
+          >
             Status: {doc.status}
           </span>
           {doc.priority && (
-            <span className={`px-3 py-1 rounded-full text-sm font-semibold ${priorityColors[doc.priority]}`}>
+            <span
+              className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                priorityColors[doc.priority]
+              }`}
+            >
               Priority: {doc.priority}
             </span>
           )}
@@ -70,12 +141,36 @@ const DocumentDetails = () => {
 
         {/* Document Info */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700">
-          {doc.id && <div><strong>Document ID:</strong> {doc.id}</div>}
-          {doc.submittedBy && <div><strong>Submitted By:</strong> {doc.submittedBy}</div>}
-          {doc.reviewedBy && <div><strong>Reviewed By:</strong> {doc.reviewedBy}</div>}
-          {doc.tat && <div><strong>Average TAT:</strong> {doc.tat}</div>}
-          {doc.client && <div><strong>Client:</strong> {doc.client}</div>}
-          {doc.uploadDate && <div><strong>Upload Date:</strong> {doc.uploadDate}</div>}
+          {doc.id && (
+            <div>
+              <strong>Document ID:</strong> {doc.id}
+            </div>
+          )}
+          {doc.submittedBy && (
+            <div>
+              <strong>Submitted By:</strong> {doc.submittedBy}
+            </div>
+          )}
+          {doc.reviewedBy && (
+            <div>
+              <strong>Reviewed By:</strong> {doc.reviewedBy}
+            </div>
+          )}
+          {doc.tat && (
+            <div>
+              <strong>Average TAT:</strong> {doc.tat}
+            </div>
+          )}
+          {doc.client && (
+            <div>
+              <strong>Client:</strong> {doc.client}
+            </div>
+          )}
+          {doc.uploadDate && (
+            <div>
+              <strong>Upload Date:</strong> {doc.uploadDate}
+            </div>
+          )}
         </div>
 
         {/* Issues (if any) */}
@@ -92,9 +187,12 @@ const DocumentDetails = () => {
 
         {/* Notes / Details */}
         <div className="mt-6">
-          <h2 className="text-lg font-semibold mb-2">Document Notes / Details</h2>
+          <h2 className="text-lg font-semibold mb-2">
+            Document Notes / Details
+          </h2>
           <p className="text-gray-600">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua.
           </p>
         </div>
 

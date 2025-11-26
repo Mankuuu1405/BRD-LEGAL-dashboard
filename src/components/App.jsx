@@ -10,7 +10,6 @@ import LoginPage from './pages/auth/LoginPage';
 import SignupPage from './pages/auth/SignupPage';
 
 // General Pages
-import Dashboard from './pages/Dashboard';
 import ProfilePage from './pages/ProfilePage';
 
 
@@ -45,7 +44,7 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
     children: [
-      { index: true, element: <Dashboard /> },
+      { index: true, element: <LegalDashboard /> },
       { path: 'profile', element: <ProfilePage /> },
       
       // Legal

@@ -82,12 +82,7 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute
         allowedRoles={[
-          "sales",
-          "credit",
           "legal",
-          "valuation",
-          "finance",
-          "compliance",
         ]}
       />
     ),

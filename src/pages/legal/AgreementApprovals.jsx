@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { BarChart } from "../../components/Charts";
 import BulkAssignModal from "../../components/BulkAssignModal";
 import NewAgreementModal from "../../components/NewAgreementModal";
-import { DocumentVerificationMetrics, } from "../../components/DashboardComponents";
+import { DocumentVerificationMetrics } from "../../components/DashboardComponents";
 import {
   DocumentTextIcon,
   ClockIcon,

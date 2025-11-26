@@ -16,16 +16,6 @@ const SignupPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Inline primary colors
-  // const primary = {
-  //   50: "#eff6ff",
-  //   200: "#bfdbfe",
-  //   300: "#93c5fd",
-  //   500: "#3b82f6",
-  //   600: "#2563eb",
-  //   700: "#1d4ed8",
-  // };
-
   const primary = {
     50: "#eff6ff",
     200: "#bfdbfe",
