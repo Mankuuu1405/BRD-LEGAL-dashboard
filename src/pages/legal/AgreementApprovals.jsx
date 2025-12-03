@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BarChart } from "../../components/Charts";
 import BulkAssignModal from "../../components/BulkAssignModal";
 import NewAgreementModal from "../../components/NewAgreementModal";
 import { DocumentVerificationMetrics } from "../../components/DashboardComponents";
+import { api } from "../../utils/api";
 import {
   DocumentTextIcon,
   ClockIcon,
@@ -12,54 +13,34 @@ import {
 } from "@heroicons/react/24/outline";
 
 const AgreementApprovals = () => {
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [filter, setFilter] = useState("pending");
   const [searchQuery, setSearchQuery] = useState("");
   const [isBulkAssignModalOpen, setIsBulkAssignModalOpen] = useState(false);
   const [isNewAgreementModalOpen, setIsNewAgreementModalOpen] = useState(false);
-  const [agreements, setAgreements] = useState([
-    {
-      id: "AGR-2101",
-      type: "Loan Agreement",
-      client: "Vikram Singh",
-      amount: "₹450,000",
-      submittedDate: "2025-11-03",
-      priority: "High",
-      status: "Pending",
-      assignedTo: "Priya Mehta",
-    },
-    {
-      id: "AGR-2102",
-      type: "Collateral Agreement",
-      client: "Sneha Kumar",
-      amount: "₹750,000",
-      submittedDate: "2025-11-03",
-      priority: "Medium",
-      status: "Under Review",
-      assignedTo: "Rahul Sharma",
-    },
-    {
-      id: "AGR-2103",
-      type: "Property Mortgage",
-      client: "Arun Patel",
-      amount: "₹1,200,000",
-      submittedDate: "2025-11-02",
-      priority: "High",
-      status: "Approved",
-      assignedTo: "Priya Mehta",
-    },
-    {
-      id: "AGR-2104",
-      type: "Guarantor Agreement",
-      client: "Maya Reddy",
-      amount: "₹350,000",
-      submittedDate: "2025-11-02",
-      priority: "Low",
-      status: "Pending",
-      assignedTo: "Rahul Sharma",
-    },
-  ]);
+  const [agreements, setAgreements] = useState([]);
 
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await api.getAgreements();
+        setAgreements(res);
+      } catch (err) {
+        console.error("Failed to fetch agreements:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Loading...
+      </div>
+    );
   const handleNewAgreement = () => setIsNewAgreementModalOpen(true);
   const handleCloseNewAgreementModal = () => setIsNewAgreementModalOpen(false);
   const handleSaveNewAgreement = (newAgreement) => {
