@@ -2,48 +2,48 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 // Demo data (same structure as in AgreementApprovals)
-const agreementsDemo = [
-  {
-    id: "AGR-2101",
-    type: "Loan Agreement",
-    client: "Vikram Singh",
-    amount: "₹450,000",
-    submittedDate: "2025-11-03",
-    priority: "High",
-    status: "Pending",
-    assignedTo: "Priya Mehta",
-  },
-  {
-    id: "AGR-2102",
-    type: "Collateral Agreement",
-    client: "Sneha Kumar",
-    amount: "₹750,000",
-    submittedDate: "2025-11-03",
-    priority: "Medium",
-    status: "Under Review",
-    assignedTo: "Rahul Sharma",
-  },
-  {
-    id: "AGR-2103",
-    type: "Property Mortgage",
-    client: "Arun Patel",
-    amount: "₹1,200,000",
-    submittedDate: "2025-11-02",
-    priority: "High",
-    status: "Approved",
-    assignedTo: "Priya Mehta",
-  },
-  {
-    id: "AGR-2104",
-    type: "Guarantor Agreement",
-    client: "Maya Reddy",
-    amount: "₹350,000",
-    submittedDate: "2025-11-02",
-    priority: "Low",
-    status: "Pending",
-    assignedTo: "Rahul Sharma",
-  },
-];
+// const agreementsDemo = [
+//   {
+//     id: "AGR-2101",
+//     type: "Loan Agreement",
+//     client: "Vikram Singh",
+//     amount: "₹450,000",
+//     submittedDate: "2025-11-03",
+//     priority: "High",
+//     status: "Pending",
+//     assignedTo: "Priya Mehta",
+//   },
+//   {
+//     id: "AGR-2102",
+//     type: "Collateral Agreement",
+//     client: "Sneha Kumar",
+//     amount: "₹750,000",
+//     submittedDate: "2025-11-03",
+//     priority: "Medium",
+//     status: "Under Review",
+//     assignedTo: "Rahul Sharma",
+//   },
+//   {
+//     id: "AGR-2103",
+//     type: "Property Mortgage",
+//     client: "Arun Patel",
+//     amount: "₹1,200,000",
+//     submittedDate: "2025-11-02",
+//     priority: "High",
+//     status: "Approved",
+//     assignedTo: "Priya Mehta",
+//   },
+//   {
+//     id: "AGR-2104",
+//     type: "Guarantor Agreement",
+//     client: "Maya Reddy",
+//     amount: "₹350,000",
+//     submittedDate: "2025-11-02",
+//     priority: "Low",
+//     status: "Pending",
+//     assignedTo: "Rahul Sharma",
+//   },
+// ];
 
 const AgreementDetails = () => {
   const { id } = useParams();

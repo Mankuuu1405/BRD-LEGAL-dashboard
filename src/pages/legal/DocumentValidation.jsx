@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UploadDocumentModal from "../../components/UploadDocumentModal";
+import {api} from "../../utils/api"
 import {
   StatCard,
   DocumentVerificationMetrics,
@@ -19,44 +20,32 @@ const DocumentValidation = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
-  const [documents, setDocuments] = useState([
-    {
-      id: "DOC-2101",
-      name: "Property Sale Deed",
-      type: "Property Document",
-      client: "Amit Kumar",
-      uploadDate: "2025-11-03",
-      status: "Pending",
-      issues: [],
-    },
-    {
-      id: "DOC-2102",
-      name: "Income Tax Returns",
-      type: "Income Proof",
-      client: "Priya Sharma",
-      uploadDate: "2025-11-03",
-      status: "Invalid",
-      issues: ["Incomplete information", "Missing signatures"],
-    },
-    {
-      id: "DOC-2103",
-      name: "Bank Statements",
-      type: "Financial Document",
-      client: "Rahul Verma",
-      uploadDate: "2025-11-02",
-      status: "Valid",
-      issues: [],
-    },
-    {
-      id: "DOC-2104",
-      name: "Collateral Agreement",
-      type: "Legal Document",
-      client: "Sneha Reddy",
-      uploadDate: "2025-11-02",
-      status: "Pending",
-      issues: [],
-    },
-  ]);
+  const [documents, setDocuments] = useState([]);
+const [loading, setLoading] = useState(true);
+
+
+useEffect(() => {
+  const loadDocuments = async () => {
+    try {
+      const res = await api.getDocuments();
+      setDocuments(res);
+    } catch (err) {
+      console.error("Failed to fetch documents:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadDocuments();
+}, []);
+
+if (loading)
+  return (
+    <div className="flex justify-center items-center h-screen">
+      Loading documents...
+    </div>
+  );
+
 
   const filtered = documents.filter((doc) => {
     if (filter !== "all" && doc.status.toLowerCase() !== filter) return false;

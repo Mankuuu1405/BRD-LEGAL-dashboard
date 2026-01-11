@@ -10,7 +10,7 @@ import { MessageProvider } from "./context/MessageContext.jsx";
 import GlobalMessageDisplay from "./components/GlobalMessageDisplay.jsx";
 
 // --- Page Imports ---
-// Auth
+// Auth --
 import LoginPage from "./pages/auth/LoginPage.jsx";
 import SignupPage from "./pages/auth/SignupPage.jsx";
 import ProfilePage from "./pages/auth/ProfilePage.jsx";

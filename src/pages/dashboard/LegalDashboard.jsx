@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { DashboardMetrics } from "../../components/DashboardComponents";
 import { LineChart, BarChart, PieChart } from "../../components/Charts";
 import useApi from "./useApi";
+import { api } from "../../utils/api";
 import GenerateReportModal from "../../components/GenerateReportModal";
 import {
   ClockIcon,
@@ -11,74 +12,9 @@ import {
   ArrowPathIcon,
 } from "@heroicons/react/24/outline";
 
-const fetchDashboardData = async () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        metrics: [
-          {
-            title: "Pending Reviews",
-            value: "28",
-            trend: -5,
-            color: "yellow",
-            icon: ClockIcon,
-          },
-          {
-            title: "Approved Today",
-            value: "12",
-            trend: 4.2,
-            color: "green",
-            icon: CheckCircleIcon,
-          },
-          {
-            title: "Average TAT",
-            value: "1.2 days",
-            trend: -8.5,
-            color: "blue",
-            icon: ArrowPathIcon,
-          },
-          {
-            title: "Compliance Score",
-            value: "96%",
-            trend: 2.1,
-            color: "green",
-            icon: ShieldCheckIcon,
-          },
-        ],
-        recentDocuments: [
-          {
-            id: "DOC-2001",
-            type: "Loan Agreement",
-            status: "Under Review",
-            priority: "High",
-          },
-          {
-            id: "DOC-2002",
-            type: "Property Papers",
-            status: "Pending",
-            priority: "Medium",
-          },
-          {
-            id: "DOC-2003",
-            type: "Collateral Docs",
-            status: "Approved",
-            priority: "High",
-          },
-          {
-            id: "DOC-2004",
-            type: "Income Proof",
-            status: "Rejected",
-            priority: "Low",
-          },
-        ],
-      });
-    }, 1000);
-  });
-};
-
 const LegalDashboard = () => {
   const navigate = useNavigate();
-  const { data: dashboardData, loading, error } = useApi(fetchDashboardData);
+  const { data: dashboardData, loading, error } = useApi(api.getLegalDashboard);
   const [isGenerateReportModalOpen, setGenerateReportModalOpen] =
     useState(false);
 
@@ -99,7 +35,19 @@ const LegalDashboard = () => {
     );
 
   if (!dashboardData) return null;
+  const iconMap = {
+    ClockIcon: ClockIcon,
+    CheckCircleIcon: CheckCircleIcon,
+    ShieldCheckIcon: ShieldCheckIcon,
+    ArrowPathIcon: ArrowPathIcon,
+  };
 
+  const mappedMetrics = dashboardData.metrics.map((item) => ({
+    ...item,
+    icon: iconMap[item.icon], // convert string to actual component
+  }));
+
+  
   return (
     <div className="space-y-6 p-6">
       {/* Header */}
@@ -129,7 +77,7 @@ const LegalDashboard = () => {
       </div>
 
       {/* Metrics */}
-      <DashboardMetrics items={dashboardData.metrics} />
+      <DashboardMetrics items={mappedMetrics} />
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -160,17 +108,31 @@ const LegalDashboard = () => {
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold mb-4">Review Status</h3>
             <BarChart
+              options={{
+                responsive: true,
+                plugins: { legend: { position: "top" } },
+                scales: {
+                  x: { stacked: false },
+                  y: { beginAtZero: true },
+                },
+              }}
               data={{
                 labels: ["Drafting", "In Negotiation", "Ready for Sign-off"],
                 datasets: [
                   {
-                    label: "Number of Documents",
-                    data: [12, 7, 5],
-                    backgroundColor: [
-                      "rgba(34,197,94,0.8)",
-                      "rgba(234,179,8,0.8)",
-                      "rgba(79,70,229,0.8)",
-                    ],
+                    label: "Drafting",
+                    data: [12, 0, 0],
+                    backgroundColor: "rgba(34,197,94,0.8)",
+                  },
+                  {
+                    label: "In Negotiation",
+                    data: [0, 7, 0],
+                    backgroundColor: "rgba(234,179,8,0.8)",
+                  },
+                  {
+                    label: "Ready for Sign-off",
+                    data: [0, 0, 5],
+                    backgroundColor: "rgba(79,70,229,0.8)",
                   },
                 ],
               }}
