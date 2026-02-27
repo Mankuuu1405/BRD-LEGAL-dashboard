@@ -6,7 +6,7 @@ const SignupPage = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    role: "valuation",
+    role: "legal",
     password: "",
     confirmPassword: "",
   });

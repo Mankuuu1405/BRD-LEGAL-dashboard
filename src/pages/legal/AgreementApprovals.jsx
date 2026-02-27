@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { BarChart } from "../../components/Charts";
 import BulkAssignModal from "../../components/BulkAssignModal";
 import NewAgreementModal from "../../components/NewAgreementModal";
-import { DocumentVerificationMetrics } from "../../components/DashboardComponents";
 import {
   DocumentTextIcon,
   ClockIcon,
@@ -78,9 +77,7 @@ const AgreementApprovals = () => {
           : agr
       )
     );
-    alert(
-      `Successfully assigned ${selectedIds.length} agreements to ${assignee}.`
-    );
+    alert(`Successfully assigned ${selectedIds.length} agreements to ${assignee}.`);
     handleCloseBulkAssignModal();
   };
 
@@ -99,35 +96,108 @@ const AgreementApprovals = () => {
   };
 
   const filtered = agreements.filter((agr) => {
-    const matchesFilter =
-      filter === "all" || agr.status.toLowerCase() === filter;
+    const matchesFilter = filter === "all" || agr.status.toLowerCase() === filter;
     const matchesSearch =
       agr.client.toLowerCase().includes(searchQuery.toLowerCase()) ||
       agr.id.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
+  // ------------------------------
+  // Metric Cards Data
+  // ------------------------------
+  const statsItems = [
+    {
+      icon: DocumentTextIcon,
+      title: "Total Agreements",
+      mainValue: 124,
+      subText: "15 this month",
+      trendValue: 15,
+      trendType: "up",
+    },
+    {
+      icon: ClockIcon,
+      title: "Pending Review",
+      mainValue: 28,
+      subText: "Avg TAT: 2.3 days",
+      trendValue: 5,
+      trendType: "up",
+    },
+    {
+      icon: CheckBadgeIcon,
+      title: "Approved",
+      mainValue: 82,
+      subText: "95% approval rate",
+      trendValue: 92,
+      trendType: "up",
+    },
+    {
+      icon: ExclamationTriangleIcon,
+      title: "High Priority",
+      mainValue: 12,
+      subText: "Requires immediate attention",
+      trendValue: 12,
+      trendType: "down",
+    },
+  ];
+
+  // ------------------------------
+  // Reusable Badges
+  // ------------------------------
+  const StatusBadge = ({ status }) => (
+    <span
+      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+        status === "Approved"
+          ? "bg-green-100 text-green-800"
+          : status === "Rejected"
+          ? "bg-red-100 text-red-800"
+          : status === "Under Review"
+          ? "bg-blue-100 text-blue-800"
+          : "bg-yellow-100 text-yellow-800"
+      }`}
+    >
+      {status}
+    </span>
+  );
+
+  const PriorityBadge = ({ priority }) => (
+    <span
+      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+        priority === "High"
+          ? "bg-red-100 text-red-800"
+          : priority === "Medium"
+          ? "bg-yellow-100 text-yellow-800"
+          : "bg-green-100 text-green-800"
+      }`}
+    >
+      {priority}
+    </span>
+  );
+
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+
+      {/* ── Header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
             Agreement Approvals
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-0.5 text-sm text-gray-500">
             Review and approve legal agreements
           </p>
         </div>
-        <div className="flex gap-3">
+
+        {/* Buttons — always side by side */}
+        <div className="flex flex-row gap-2 w-full sm:w-auto">
           <button
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             onClick={handleNewAgreement}
           >
             New Agreement
           </button>
           <button
-            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+            className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm font-medium bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
             onClick={handleBulkAssign}
           >
             Bulk Assign
@@ -135,59 +205,44 @@ const AgreementApprovals = () => {
         </div>
       </div>
 
-      <DocumentVerificationMetrics
-        items={[
-          {
-            title: "Total Agreements",
-            mainValue: 124,
-            subText: "15 this month",
-            trendValue: 15,
-            trendType: "up",
-            icon: DocumentTextIcon,
-          },
-          {
-            title: "Pending Review",
-            mainValue: 28,
-            subText: "Average TAT: 2.3 days",
-            trendValue: 5, // example trend %
-            trendType: "up",
-            icon: ClockIcon,
-          },
-          {
-            title: "Approved",
-            mainValue: 82,
-            subText: "95% approval rate",
-            trendValue: 92,
-            trendType: "up",
-            icon: CheckBadgeIcon,
-          },
-          {
-            title: "High Priority",
-            mainValue: 12,
-            subText: "Requires immediate attention",
-            trendValue: -12,
-            trendType: "down",
-            icon: ExclamationTriangleIcon,
-          },
-        ]}
-      />
+      {/* ── Metric Cards — 2 cols on mobile, 4 on desktop ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        {statsItems.map((item, idx) => (
+          <div
+            key={idx}
+            className="bg-white rounded-xl shadow-sm border border-gray-100 p-3 sm:p-4 flex flex-col gap-1"
+          >
+            <div className="flex items-center justify-between mb-1">
+              <div className="p-1.5 bg-blue-50 rounded-lg">
+                <item.icon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+              </div>
+              <span
+                className={`text-xs font-semibold ${
+                  item.trendType === "up" ? "text-green-600" : "text-red-500"
+                }`}
+              >
+                {item.trendType === "up" ? "↑" : "↓"} {item.trendValue}%
+              </span>
+            </div>
+            <p className="text-2xl sm:text-3xl font-bold text-gray-900">
+              {item.mainValue}
+            </p>
+            <p className="text-xs sm:text-sm font-medium text-gray-700 leading-tight">
+              {item.title}
+            </p>
+            <p className="text-xs text-gray-400 leading-tight">{item.subText}</p>
+          </div>
+        ))}
+      </div>
 
-      {/* Approval Timeline */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h3 className="text-lg font-semibold mb-4">
+      {/* ── Approval Timeline Chart ── */}
+      <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md">
+        <h3 className="text-base sm:text-lg font-semibold mb-4">
           Approval Timeline (Last 7 Days)
         </h3>
         <BarChart
           data={{
-            labels: [
-              "Nov 1",
-              "Nov 2",
-              "Nov 3",
-              "Nov 4",
-              "Nov 5",
-              "Nov 6",
-              "Nov 7",
-            ],
+            labels: ["Nov 1", "Nov 2", "Nov 3", "Nov 4", "Nov 5", "Nov 6", "Nov 7"],
             datasets: [
               {
                 label: "Approved",
@@ -204,15 +259,19 @@ const AgreementApprovals = () => {
         />
       </div>
 
-      {/* Filters */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <label className="text-sm text-gray-600">Status:</label>
+      {/* ── Filters + Table ── */}
+      <div className="bg-white p-3 sm:p-6 rounded-xl shadow-md">
+
+        {/* Filter Row */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-4">
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-600 whitespace-nowrap">
+              Status:
+            </label>
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="px-3 py-2 border rounded-lg w-full sm:w-auto"
+              className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
             >
               <option value="all">All Agreements</option>
               <option value="pending">Pending</option>
@@ -221,34 +280,29 @@ const AgreementApprovals = () => {
               <option value="rejected">Rejected</option>
             </select>
           </div>
-          <input
-            type="search"
-            placeholder="Search by client name or agreement ID..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg"
-          />
+          <div className="flex-1">
+            <input
+              type="search"
+              placeholder="Search by client name or agreement ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+            />
+          </div>
         </div>
 
-        {/* Table for large screens */}
-        <div className="overflow-x-auto sm:block hidden">
+        {/* ── Desktop Table ── */}
+        <div className="overflow-x-auto hidden sm:block">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 {[
-                  "Agreement ID",
-                  "Type",
-                  "Client",
-                  "Amount",
-                  "Submitted",
-                  "Priority",
-                  "Status",
-                  "Assigned To",
-                  "Actions",
+                  "Agreement ID", "Type", "Client", "Amount",
+                  "Submitted", "Priority", "Status", "Assigned To", "Actions",
                 ].map((h) => (
                   <th
                     key={h}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     {h}
                   </th>
@@ -258,107 +312,36 @@ const AgreementApprovals = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {filtered.map((agr) => (
                 <tr key={agr.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-500">{agr.id}</td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    {agr.type}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {agr.client}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {agr.amount}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {agr.submittedDate}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-2 inline-flex text-xs font-semibold rounded-full ${
-                        agr.priority === "High"
-                          ? "bg-red-100 text-red-800"
-                          : agr.priority === "Medium"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-green-100 text-green-800"
-                      }`}
-                    >
-                      {agr.priority}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-2 inline-flex text-xs font-semibold rounded-full ${
-                        agr.status === "Approved"
-                          ? "bg-green-100 text-green-800"
-                          : agr.status === "Rejected"
-                          ? "bg-red-100 text-red-800"
-                          : agr.status === "Under Review"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
-                      {agr.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {agr.assignedTo}
-                  </td>
-                  <td className="px-6 py-4 text-sm font-medium">
+                  <td className="px-4 py-4 text-sm text-gray-500">{agr.id}</td>
+                  <td className="px-4 py-4 text-sm font-medium text-gray-900">{agr.type}</td>
+                  <td className="px-4 py-4 text-sm text-gray-900">{agr.client}</td>
+                  <td className="px-4 py-4 text-sm text-gray-900">{agr.amount}</td>
+                  <td className="px-4 py-4 text-sm text-gray-500">{agr.submittedDate}</td>
+                  <td className="px-4 py-4"><PriorityBadge priority={agr.priority} /></td>
+                  <td className="px-4 py-4"><StatusBadge status={agr.status} /></td>
+                  <td className="px-4 py-4 text-sm text-gray-900">{agr.assignedTo}</td>
+                  <td className="px-4 py-4 text-sm font-medium">
                     {agr.status === "Pending" && (
                       <>
-                        <button
-                          onClick={() =>
-                            navigate(`/legal/agreements/review/${agr.id}`)
-                          }
-                          className="text-blue-600 hover:text-blue-900 mr-3"
-                        >
-                          Review
-                        </button>
-                        <button
-                          onClick={() => handleReassign(agr.id)}
-                          className="text-gray-600 hover:text-gray-900"
-                        >
-                          Reassign
-                        </button>
+                        <button onClick={() => navigate(`/legal/agreements/review/${agr.id}`)} className="text-blue-600 hover:text-blue-900 mr-3">Review</button>
+                        <button onClick={() => handleReassign(agr.id)} className="text-gray-600 hover:text-gray-900">Reassign</button>
                       </>
                     )}
                     {agr.status === "Under Review" && (
                       <>
-                        <button
-                          onClick={() => handleApprove(agr.id)}
-                          className="text-green-600 hover:text-green-900 mr-3"
-                        >
-                          Approve
-                        </button>
-                        <button
-                          onClick={() => handleReject(agr.id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          Reject
-                        </button>
+                        <button onClick={() => handleApprove(agr.id)} className="text-green-600 hover:text-green-900 mr-3">Approve</button>
+                        <button onClick={() => handleReject(agr.id)} className="text-red-600 hover:text-red-900">Reject</button>
                       </>
                     )}
-                    {(agr.status === "Approved" ||
-                      agr.status === "Rejected") && (
-                      <button
-                        onClick={() =>
-                          navigate(`/legal/agreements/${agr.id}`, {
-                            state: { agreements },
-                          })
-                        }
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        View Details
-                      </button>
+                    {(agr.status === "Approved" || agr.status === "Rejected") && (
+                      <button onClick={() => navigate(`/legal/agreements/${agr.id}`, { state: { agreements } })} className="text-blue-600 hover:text-blue-900">View Details</button>
                     )}
                   </td>
                 </tr>
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={9}
-                    className="px-6 py-4 text-center text-sm text-gray-500"
-                  >
+                  <td colSpan={9} className="px-6 py-6 text-center text-sm text-gray-500">
                     No agreements match your filters.
                   </td>
                 </tr>
@@ -367,114 +350,120 @@ const AgreementApprovals = () => {
           </table>
         </div>
 
-        {/* Card view for mobile */}
-        <div className="sm:hidden space-y-4">
-          {filtered.map((agr) => (
-            <div
-              key={agr.id}
-              className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm"
-            >
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-semibold text-gray-900">{agr.type}</span>
-                <span
-                  className={`px-2 inline-flex text-xs font-semibold rounded-full ${
-                    agr.status === "Approved"
-                      ? "bg-green-100 text-green-800"
-                      : agr.status === "Rejected"
-                      ? "bg-red-100 text-red-800"
-                      : agr.status === "Under Review"
-                      ? "bg-blue-100 text-blue-800"
-                      : "bg-yellow-100 text-yellow-800"
-                  }`}
-                >
-                  {agr.status}
-                </span>
+        {/* ── Mobile Cards ── */}
+        <div className="sm:hidden space-y-3">
+          {filtered.length > 0 ? (
+            filtered.map((agr) => (
+              <div
+                key={agr.id}
+                className="border border-gray-200 rounded-lg p-3 bg-white shadow-sm"
+              >
+                {/* Type + Status */}
+                <div className="flex justify-between items-start gap-2 mb-2">
+                  <span className="font-semibold text-gray-900 text-sm leading-tight">
+                    {agr.type}
+                  </span>
+                  <StatusBadge status={agr.status} />
+                </div>
+
+                {/* 2-column detail grid */}
+                <div className="grid grid-cols-2 gap-x-3 gap-y-1 mb-3">
+                  <p className="text-xs text-gray-500">
+                    <span className="font-medium text-gray-600">ID: </span>{agr.id}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    <span className="font-medium text-gray-600">Date: </span>{agr.submittedDate}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    <span className="font-medium text-gray-600">Client: </span>{agr.client}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    <span className="font-medium text-gray-600">Amount: </span>{agr.amount}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    <span className="font-medium text-gray-600">Assigned: </span>{agr.assignedTo}
+                  </p>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-medium text-gray-600">Priority:</span>
+                    <PriorityBadge priority={agr.priority} />
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
+                  {agr.status === "Pending" && (
+                    <>
+                      <button
+                        onClick={() => navigate(`/legal/agreements/review/${agr.id}`)}
+                        className="px-3 py-1 text-xs font-medium text-blue-600 border border-blue-300 rounded-full hover:bg-blue-50 transition"
+                      >
+                        Review
+                      </button>
+                      <button
+                        onClick={() => handleReassign(agr.id)}
+                        className="px-3 py-1 text-xs font-medium text-gray-600 border border-gray-300 rounded-full hover:bg-gray-50 transition"
+                      >
+                        Reassign
+                      </button>
+                    </>
+                  )}
+                  {agr.status === "Under Review" && (
+                    <>
+                      <button
+                        onClick={() => handleApprove(agr.id)}
+                        className="px-3 py-1 text-xs font-medium text-green-600 border border-green-300 rounded-full hover:bg-green-50 transition"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => handleReject(agr.id)}
+                        className="px-3 py-1 text-xs font-medium text-red-600 border border-red-300 rounded-full hover:bg-red-50 transition"
+                      >
+                        Reject
+                      </button>
+                    </>
+                  )}
+                  {(agr.status === "Approved" || agr.status === "Rejected") && (
+                    <button
+                      onClick={() => navigate(`/legal/agreements/${agr.id}`, { state: { agreements } })}
+                      className="px-3 py-1 text-xs font-medium text-blue-600 border border-blue-300 rounded-full hover:bg-blue-50 transition"
+                    >
+                      View Details
+                    </button>
+                  )}
+                </div>
               </div>
-              <p className="text-sm text-gray-500">
-                <strong>ID:</strong> {agr.id}
-              </p>
-              <p className="text-sm text-gray-500">
-                <strong>Client:</strong> {agr.client}
-              </p>
-              <p className="text-sm text-gray-500">
-                <strong>Amount:</strong> {agr.amount}
-              </p>
-              <p className="text-sm text-gray-500">
-                <strong>Submitted:</strong> {agr.submittedDate}
-              </p>
-              <p className="text-sm text-gray-500">
-                <strong>Priority:</strong> {agr.priority}
-              </p>
-              <p className="text-sm text-gray-500">
-                <strong>Assigned To:</strong> {agr.assignedTo}
-              </p>
-              <div className="mt-2 flex flex-wrap gap-2 text-sm">
-                {agr.status === "Pending" && (
-                  <>
-                    <button
-                      onClick={() =>
-                        navigate(`/legal/agreements/review/${agr.id}`)
-                      }
-                      className="text-blue-600 hover:text-blue-900"
-                    >
-                      Review
-                    </button>
-                    <button
-                      onClick={() => handleReassign(agr.id)}
-                      className="text-gray-600 hover:text-gray-900"
-                    >
-                      Reassign
-                    </button>
-                  </>
-                )}
-                {agr.status === "Under Review" && (
-                  <>
-                    <button
-                      onClick={() => handleApprove(agr.id)}
-                      className="text-green-600 hover:text-green-900"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => handleReject(agr.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      Reject
-                    </button>
-                  </>
-                )}
-                {(agr.status === "Approved" || agr.status === "Rejected") && (
-                  <button
-                    onClick={() =>
-                      navigate(`/legal/agreements/${agr.id}`, {
-                        state: { agreements },
-                      })
-                    }
-                    className="text-blue-600 hover:text-blue-900"
-                  >
-                    View Details
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-center text-sm text-gray-500 py-6">
+              No agreements match your filters.
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Guidelines */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="text-lg font-semibold text-blue-900 mb-2">
+      {/* ── Guidelines ── */}
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+        <h3 className="text-sm sm:text-base font-semibold text-blue-900 mb-2">
           Legal Review Guidelines
         </h3>
-        <ul className="list-disc list-inside text-sm text-blue-800 space-y-1">
-          <li>Verify all party details and signatures</li>
-          <li>Check compliance with current regulations</li>
-          <li>Validate terms and conditions</li>
-          <li>Review collateral documentation</li>
-          <li>Ensure proper witnessing and notarization</li>
+        <ul className="space-y-1.5">
+          {[
+            "Verify all party details and signatures",
+            "Check compliance with current regulations",
+            "Validate terms and conditions",
+            "Review collateral documentation",
+            "Ensure proper witnessing and notarization",
+          ].map((g, idx) => (
+            <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm text-blue-800">
+              <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5" />
+              <span>{g}</span>
+            </li>
+          ))}
         </ul>
       </div>
 
+      {/* ── Modals ── */}
       <BulkAssignModal
         isOpen={isBulkAssignModalOpen}
         onClose={handleCloseBulkAssignModal}
@@ -483,7 +472,6 @@ const AgreementApprovals = () => {
         )}
         onBulkAssign={handlePerformBulkAssign}
       />
-
       <NewAgreementModal
         isOpen={isNewAgreementModalOpen}
         onClose={handleCloseNewAgreementModal}

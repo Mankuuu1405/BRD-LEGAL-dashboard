@@ -9,14 +9,17 @@ const ProfilePage = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [profileImage, setProfileImage] = useState("https://via.placeholder.com/150");
+  const [profileImage, setProfileImage] = useState("https://ui-avatars.com/api/?name=User&background=cbd5e1&color=475569&size=150");
 
   useEffect(() => {
-    if (user) {
-      setUsername(user.name || "");
-      setEmail(user.email || "");
-    }
-  }, [user]);
+  if (user) {
+    setUsername(user.name || "");
+    setEmail(user.email || "");
+    setProfileImage(
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || "User")}&background=3b82f6&color=ffffff&size=150`
+    );
+  }
+}, [user]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -98,7 +101,7 @@ const ProfilePage = () => {
                 <img
                   src={profileImage}
                   alt="Profile"
-                  className="w-32 h-32 rounded-full object-cover shadow-md"
+                className="w-32 h-32 rounded-full object-cover object-[center_20%] shadow-md"
                 />
                 <label className="absolute bottom-0 right-0 bg-blue-500 hover:bg-blue-600 text-white rounded-full p-2 cursor-pointer">
                   <input type="file" className="hidden" onChange={handleImageChange} />

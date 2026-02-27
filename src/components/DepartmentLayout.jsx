@@ -13,7 +13,6 @@ const DepartmentLayout = () => {
       <div className="flex flex-col min-h-screen">
         {/* HEADER */}
         <div className="lg:pl-72">
-          {/* Only add padding on large screens */}
           <Header setMobileSidebarOpen={setMobileSidebarOpen} />
         </div>
 
@@ -27,8 +26,8 @@ const DepartmentLayout = () => {
 
           {/* MAIN CONTENT */}
           <main className="flex-1 bg-gray-50 min-h-screen lg:pl-72 pt-16">
-            {/* padding only on large */}
-            <div className="container mx-auto p-6">
+            {/* p-3 on mobile, p-6 on desktop — no container mx-auto which can add extra spacing */}
+            <div className="p-3 sm:p-6">
               <Outlet />
             </div>
           </main>
