@@ -6,7 +6,6 @@ import {
   Outlet,
 } from "react-router-dom";
 import { useAuth } from "./context/AuthContext.jsx";
-import { MessageProvider } from "./context/MessageContext.jsx";
 import GlobalMessageDisplay from "./components/GlobalMessageDisplay.jsx";
 
 // --- Page Imports ---
@@ -99,7 +98,12 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <GlobalMessageDisplay />
+      <RouterProvider router={router} />
+    </>
+  );
 }
 
 export default App;

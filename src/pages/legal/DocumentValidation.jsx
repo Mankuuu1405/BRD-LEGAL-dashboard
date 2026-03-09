@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import UploadDocumentModal from "../../components/UploadDocumentModal";
 import {
@@ -12,54 +12,61 @@ import {
   CheckBadgeIcon,
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
+import {
+  fetchDocuments,
+  validateDocument,
+  rejectDocument,
+  createDocument,
+  uploadDocument,
+} from "../../api/documentValidationApi";
 
 const DocumentValidation = () => {
   const navigate = useNavigate();
-  const [filter, setFilter] = useState("pending");
+  const [filter, setFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [documents, setDocuments] = useState([
-    {
-      id: "DOC-2101",
-      name: "Property Sale Deed",
-      type: "Property Document",
-      client: "Amit Kumar",
-      uploadDate: "2025-11-03",
-      status: "Pending",
-      issues: [],
-    },
-    {
-      id: "DOC-2102",
-      name: "Income Tax Returns",
-      type: "Income Proof",
-      client: "Priya Sharma",
-      uploadDate: "2025-11-03",
-      status: "Invalid",
-      issues: ["Incomplete information", "Missing signatures"],
-    },
-    {
-      id: "DOC-2103",
-      name: "Bank Statements",
-      type: "Financial Document",
-      client: "Rahul Verma",
-      uploadDate: "2025-11-02",
-      status: "Valid",
-      issues: [],
-    },
-    {
-      id: "DOC-2104",
-      name: "Collateral Agreement",
-      type: "Legal Document",
-      client: "Sneha Reddy",
-      uploadDate: "2025-11-02",
-      status: "Pending",
-      issues: [],
-    },
-  ]);
+  // Fetch documents on component mount
+  useEffect(() => {
+    loadDocuments();
+  }, []);
+
+  const loadDocuments = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await fetchDocuments();
+      
+      // Handle both array and paginated responses
+      const docsArray = Array.isArray(data) ? data : (data.results || []);
+      
+      // Transform API response to component format
+      const transformedDocs = docsArray.map((doc) => ({
+        id: doc.document_id,
+        name: doc.name,
+        type: doc.document_type,
+        client: doc.client_name,
+        uploadDate: new Date(doc.upload_date).toISOString().slice(0, 10),
+        status: doc.status,
+        issues: doc.issues ? doc.issues.split(',').map(i => i.trim()).filter(i => i) : [],
+      }));
+      
+      setDocuments(transformedDocs);
+    } catch (err) {
+      console.error('Error loading documents:', err);
+      setError('Failed to load documents. Please try again.');
+      // Fallback to empty array
+      setDocuments([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filtered = documents.filter((doc) => {
-    if (filter !== "all" && doc.status.toLowerCase() !== filter) return false;
+    if (filter !== "all" && doc.status.toLowerCase() !== filter.toLowerCase()) return false;
     if (
       searchQuery &&
       !doc.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
@@ -70,46 +77,141 @@ const DocumentValidation = () => {
     return true;
   });
 
-  const handleValidate = (id) => {
-    setDocuments(
-      documents.map((doc) =>
-        doc.id === id ? { ...doc, status: "Valid", issues: [] } : doc
-      )
-    );
-    alert(`Document ${id} validated.`);
+  const handleValidate = async (id) => {
+    try {
+      // Update UI optimistically
+      setDocuments(
+        documents.map((doc) =>
+          doc.id === id ? { ...doc, status: "Valid", issues: [] } : doc
+        )
+      );
+      
+      // Call API
+      await validateDocument(id);
+      
+      // Refresh from backend silently in background
+      const data = await fetchDocuments();
+      const docsArray = Array.isArray(data) ? data : (data.results || []);
+      const transformedDocs = docsArray.map((doc) => ({
+        id: doc.document_id,
+        name: doc.name,
+        type: doc.document_type,
+        client: doc.client_name,
+        uploadDate: new Date(doc.upload_date).toISOString().slice(0, 10),
+        status: doc.status,
+        issues: doc.issues ? doc.issues.split(',').map(i => i.trim()).filter(i => i) : [],
+      }));
+      setDocuments(transformedDocs);
+      
+      alert(`Document ${id} validated successfully.`);
+    } catch (err) {
+      console.error('Error validating document:', err);
+      alert('Failed to validate document. Please try again.');
+      // Reload on error
+      loadDocuments();
+    }
   };
 
-  const handleReject = (id) => {
-    setDocuments(
-      documents.map((doc) =>
-        doc.id === id
-          ? { ...doc, status: "Invalid", issues: ["Rejected by legal team"] }
-          : doc
-      )
-    );
-    alert(`Document ${id} rejected.`);
+  const handleReject = async (id) => {
+    try {
+      const issueReason = prompt('Enter reason for rejection:', 'Rejected by legal team');
+      if (!issueReason) return; // User cancelled
+
+      // Update UI optimistically
+      setDocuments(
+        documents.map((doc) =>
+          doc.id === id
+            ? { 
+                ...doc, 
+                status: "Invalid", 
+                issues: issueReason ? [issueReason] : ["Rejected by legal team"]
+              }
+            : doc
+        )
+      );
+
+      // Call API
+      await rejectDocument(id, issueReason);
+      
+      // Refresh from backend silently in background
+      const data = await fetchDocuments();
+      const docsArray = Array.isArray(data) ? data : (data.results || []);
+      const transformedDocs = docsArray.map((doc) => ({
+        id: doc.document_id,
+        name: doc.name,
+        type: doc.document_type,
+        client: doc.client_name,
+        uploadDate: new Date(doc.upload_date).toISOString().slice(0, 10),
+        status: doc.status,
+        issues: doc.issues ? doc.issues.split(',').map(i => i.trim()).filter(i => i) : [],
+      }));
+      setDocuments(transformedDocs);
+      
+      alert(`Document ${id} rejected.`);
+    } catch (err) {
+      console.error('Error rejecting document:', err);
+      alert('Failed to reject document. Please try again.');
+      // Reload on error
+      loadDocuments();
+    }
   };
 
   const handleUploadDocument = () => setIsUploadModalOpen(true);
   const handleCloseUploadModal = () => setIsUploadModalOpen(false);
 
-  const handleDocumentUpload = (file, type, client) => {
-    const newDoc = {
-      id: `DOC-${Math.floor(Math.random() * 10000)}`,
-      name: file.name,
-      type: type,
-      client: client,
-      uploadDate: new Date().toISOString().slice(0, 10),
-      status: "Pending",
-      issues: [],
-    };
-    setDocuments((prevDocs) => [newDoc, ...prevDocs]);
-    alert(`Document ${file.name} uploaded successfully!`);
-    handleCloseUploadModal();
+  const handleDocumentUpload = async (file, type, client) => {
+    try {
+      // First, create the document record in the database
+      const newDocRecord = await createDocument({
+        name: file.name,
+        document_type: type,
+        client_name: client,
+        status: "Pending",
+      });
+
+      // Then upload the actual file
+      const formData = new FormData();
+      formData.append('document_file', file);
+      formData.append('document_type', type);
+      formData.append('client_name', client);
+
+      const uploadResponse = await uploadDocument(formData);
+
+      // Add new document to the list
+      const newDoc = {
+        id: newDocRecord.document_id,
+        name: newDocRecord.name,
+        type: newDocRecord.document_type,
+        client: newDocRecord.client_name,
+        uploadDate: new Date(newDocRecord.upload_date).toISOString().slice(0, 10),
+        status: newDocRecord.status,
+        issues: [],
+      };
+      
+      setDocuments((prevDocs) => [newDoc, ...prevDocs]);
+      alert(`Document ${file.name} uploaded successfully!`);
+      handleCloseUploadModal();
+    } catch (err) {
+      console.error('Error uploading document:', err);
+      alert('Failed to upload document. Please try again.');
+    }
   };
 
   return (
     <div className="p-6 space-y-6">
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-red-800">{error}</p>
+          <button
+            onClick={loadDocuments}
+            className="mt-2 text-red-600 hover:text-red-900 underline"
+          >
+            Try again
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -121,8 +223,9 @@ const DocumentValidation = () => {
           </p>
         </div>
         <button
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
           onClick={handleUploadDocument}
+          disabled={loading}
         >
           Upload Document
         </button>
@@ -134,8 +237,8 @@ const DocumentValidation = () => {
           {
             title: "Total Documents",
             mainValue: documents.length,
-            subText: "New this week: 23",
-            trendValue: 23,
+            subText: `Total in system`,
+            trendValue: documents.length,
             trendType: "up",
             icon: DocumentDuplicateIcon,
           },
@@ -143,16 +246,18 @@ const DocumentValidation = () => {
             title: "Pending Review",
             mainValue: documents.filter((doc) => doc.status === "Pending")
               .length,
-            subText: "Average wait: 1.2 days",
-            trendValue: 5, // example trend %
+            subText: "Awaiting validation",
+            trendValue: documents.filter((doc) => doc.status === "Pending").length,
             trendType: "up",
             icon: EyeIcon,
           },
           {
             title: "Validated",
             mainValue: documents.filter((doc) => doc.status === "Valid").length,
-            subText: "Success rate: 92%",
-            trendValue: 92,
+            subText: documents.length > 0 
+              ? `${Math.round((documents.filter((doc) => doc.status === "Valid").length / documents.length) * 100)}% success rate`
+              : "No documents",
+            trendValue: documents.filter((doc) => doc.status === "Valid").length,
             trendType: "up",
             icon: CheckBadgeIcon,
           },
@@ -160,9 +265,11 @@ const DocumentValidation = () => {
             title: "Issues Found",
             mainValue: documents.filter((doc) => doc.status === "Invalid")
               .length,
-            subText: "↓ 12% from last week",
-            trendValue: -12,
-            trendType: "down",
+            subText: documents.length > 0
+              ? `${Math.round((documents.filter((doc) => doc.status === "Invalid").length / documents.length) * 100)}% of total`
+              : "No issues",
+            trendValue: documents.filter((doc) => doc.status === "Invalid").length,
+            trendType: documents.filter((doc) => doc.status === "Invalid").length > 0 ? "down" : "up",
             icon: ExclamationTriangleIcon,
           },
         ]}
@@ -177,6 +284,7 @@ const DocumentValidation = () => {
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
               className="px-3 py-2 border rounded-lg w-full sm:w-auto"
+              disabled={loading}
             >
               <option value="all">All Documents</option>
               <option value="pending">Pending</option>
@@ -190,11 +298,19 @@ const DocumentValidation = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg"
+            disabled={loading}
           />
         </div>
 
-        {/* Table for large screens */}
-        <div className="overflow-x-auto sm:block hidden">
+        {/* Loading State */}
+        {loading ? (
+          <div className="text-center py-8">
+            <p className="text-gray-500">Loading documents...</p>
+          </div>
+        ) : (
+          <>
+            {/* Table for large screens */}
+            <div className="overflow-x-auto sm:block hidden">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -365,6 +481,8 @@ const DocumentValidation = () => {
             </div>
           ))}
         </div>
+          </>
+        )}
       </div>
 
       {/* Document Guidelines */}

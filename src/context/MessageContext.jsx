@@ -23,6 +23,7 @@ export const MessageProvider = ({ children }) => {
     message, 
     messageType,
     showMessage,
+    addMessage: showMessage, // Alias for consistency
   };
 
   return (

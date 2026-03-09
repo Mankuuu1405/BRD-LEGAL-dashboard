@@ -7,21 +7,22 @@ const NewAgreementModal = ({ isOpen, onClose, onSave }) => {
   const [priority, setPriority] = useState('Medium');
   const [assignedTo, setAssignedTo] = useState('');
 
-  const legalTeamMembers = ['Priya Mehta', 'Rahul Sharma', 'Amit Singh', 'Sneha Reddy'];
+  // Match backend ASSIGNEES choices (first names only)
+  const legalTeamMembers = ['Rahul', 'Amit', 'Sneha', 'Priya'];
 
   const handleSubmit = () => {
     if (agreementType && client && amount && assignedTo) {
       onSave({
-        id: `AGR-${Math.floor(Math.random() * 10000)}`,
-        type: agreementType,
-        client,
-        amount: `₹${parseFloat(amount).toLocaleString()}`,
-        submittedDate: new Date().toISOString().slice(0, 10),
-        priority,
+        agreement_id: `AGR-${Math.floor(Math.random() * 10000)}`,
+        agreement_type: agreementType,
+        client_name: client,
+        amount: amount, // Send as number, not formatted string
+        priority: priority,
         status: 'Pending',
-        assignedTo,
+        assigned_to: assignedTo,
       });
 
+      // Reset form
       setAgreementType('');
       setClient('');
       setAmount('');
@@ -47,11 +48,12 @@ const NewAgreementModal = ({ isOpen, onClose, onSave }) => {
         {/* Form */}
         <div className="space-y-4">
           {/* Agreement Type */}
-          <InputField
+          <SelectField
             label="Agreement Type"
             value={agreementType}
-            placeholder="e.g., Loan Agreement"
             onChange={(e) => setAgreementType(e.target.value)}
+            options={['Loan Agreement', 'Collateral Agreement', 'Guarantor Agreement']}
+            placeholder="Select Agreement Type"
           />
 
           {/* Client */}

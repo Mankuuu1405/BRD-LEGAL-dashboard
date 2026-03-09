@@ -3,12 +3,14 @@ import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate, Link } from "react-router-dom";
 import { ShieldCheckIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
+import { login as loginApi } from "../../api/authApi.js";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
@@ -22,30 +24,32 @@ export default function LoginPage() {
     700: "#1d4ed8",
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setLoading(true);
 
-    const usersRaw = localStorage.getItem("mock_users");
-    const users = usersRaw ? JSON.parse(usersRaw) : [];
-    const found = users.find((u) => u.email === email);
-    if (!found) {
-      setError("No account found for this email. Please sign up.");
-      return;
-    }
-    if (found.password !== password) {
-      setError("Incorrect password.");
-      return;
-    }
+    try {
+      // Call the backend API
+      const response = await loginApi(email, password);
+      
+      // Save to remember me if checked
+      if (rememberMe) {
+        localStorage.setItem("remember_email", email);
+      } else {
+        localStorage.removeItem("remember_email");
+      }
 
-    if (rememberMe) {
-      localStorage.setItem("remember_email", email);
-    } else {
-      localStorage.removeItem("remember_email");
+      // Update auth context
+      login(response.user);
+      
+      // Navigate to the user's role-based dashboard
+      navigate(`/${response.user.role}`);
+    } catch (err) {
+      setError(err.error || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
-
-    login({ email: found.email, role: found.role, name: found.name });
-    navigate(`/${found.role}`);
   };
 
   return (
@@ -157,15 +161,16 @@ export default function LoginPage() {
           <button
             type="submit"
             onClick={handleSubmit}
-            className="h-11 w-full rounded-xl text-white shadow transition"
+            disabled={loading}
+            className="h-11 w-full rounded-xl text-white shadow transition disabled:opacity-50"
             style={{ background: primary[600] }}
           >
-            Sign In
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </div>
 
         <p className="mt-4 text-center text-sm text-gray-500">
-          Demo: Use any email and password to log in
+          Create an account to get started
         </p>
 
         <p className="mt-2 text-center text-sm">

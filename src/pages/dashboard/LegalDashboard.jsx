@@ -1,104 +1,279 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardMetrics } from "../../components/DashboardComponents";
 import { LineChart, BarChart, PieChart } from "../../components/Charts";
-import useApi from "./useApi";
 import GenerateReportModal from "../../components/GenerateReportModal";
+import { useMessage } from "../../context/MessageContext";
 import {
   ClockIcon,
   CheckCircleIcon,
   ShieldCheckIcon,
   ArrowPathIcon,
 } from "@heroicons/react/24/outline";
-
-const fetchDashboardData = async () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        metrics: [
-          {
-            title: "Pending Reviews",
-            value: "28",
-            trend: -5,
-            color: "yellow",
-            icon: ClockIcon,
-          },
-          {
-            title: "Approved Today",
-            value: "12",
-            trend: 4.2,
-            color: "green",
-            icon: CheckCircleIcon,
-          },
-          {
-            title: "Average TAT",
-            value: "1.2 days",
-            trend: -8.5,
-            color: "blue",
-            icon: ArrowPathIcon,
-          },
-          {
-            title: "Compliance Score",
-            value: "96%",
-            trend: 2.1,
-            color: "green",
-            icon: ShieldCheckIcon,
-          },
-        ],
-        recentDocuments: [
-          {
-            id: "DOC-2001",
-            type: "Loan Agreement",
-            status: "Under Review",
-            priority: "High",
-          },
-          {
-            id: "DOC-2002",
-            type: "Property Papers",
-            status: "Pending",
-            priority: "Medium",
-          },
-          {
-            id: "DOC-2003",
-            type: "Collateral Docs",
-            status: "Approved",
-            priority: "High",
-          },
-          {
-            id: "DOC-2004",
-            type: "Income Proof",
-            status: "Rejected",
-            priority: "Low",
-          },
-        ],
-      });
-    }, 1000);
-  });
-};
+import {
+  fetchDashboardSummary,
+  fetchDocuments,
+  fetchReviews,
+} from "../../api/dashboardApi";
 
 const LegalDashboard = () => {
   const navigate = useNavigate();
-  const { data: dashboardData, loading, error } = useApi(fetchDashboardData);
-  const [isGenerateReportModalOpen, setGenerateReportModalOpen] =
-    useState(false);
+  const { addMessage } = useMessage();
+  
+  // State management
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [dashboardStats, setDashboardStats] = useState(null);
+  const [recentDocuments, setRecentDocuments] = useState([]);
+  const [isGenerateReportModalOpen, setGenerateReportModalOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastRefresh, setLastRefresh] = useState(new Date());
+
+  // Load dashboard data on mount and set up auto-refresh
+  useEffect(() => {
+    // Load initial data
+    loadDashboardData();
+    
+    // Set up auto-refresh every 30 seconds
+    const refreshInterval = setInterval(() => {
+      console.log('Auto-refreshing dashboard data...');
+      loadDashboardData();
+    }, 30000);
+    
+    // Cleanup interval on component unmount
+    return () => clearInterval(refreshInterval);
+  }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      setRefreshing(true);
+      setError(null);
+
+      // Fetch all data in parallel
+      const [summaryData, documentsData, reviewsData] = await Promise.all([
+        fetchDashboardSummary(),
+        fetchDocuments(),
+        fetchReviews(),
+      ]);
+
+      setDashboardStats(summaryData);
+      setLastRefresh(new Date());
+      
+      // Handle paginated responses from DRF
+      const docsList = documentsData.results ? documentsData.results : documentsData;
+      
+      // Get recent documents (limit to 4)
+      const recentDocs = (Array.isArray(docsList) ? docsList : [])
+        .slice(0, 4)
+        .map(doc => ({
+          id: doc.id,
+          type: doc.document_type || 'Document',
+          status: doc.status || 'Pending',
+          priority: doc.priority || 'Medium',
+        }));
+      
+      setRecentDocuments(recentDocs);
+      console.log('Dashboard data updated at', new Date().toLocaleTimeString());
+      
+    } catch (err) {
+      console.error('Error loading dashboard data:', err);
+      const errorMsg = err.response?.data?.detail || 
+                       err.response?.statusText || 
+                       err.message || 
+                       'Failed to load dashboard data';
+      setError(`Error: ${errorMsg}`);
+      addMessage(`Error loading dashboard data: ${errorMsg}`, 'error');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   const handleNewReview = () => navigate("/legal/new-review");
 
-  if (loading)
+  // Prepare chart data from backend statistics
+  const prepareTimelineChartData = () => {
+    if (!dashboardStats?.reviews_timeline) {
+      return {
+        labels: ["Jun", "Jul", "Aug", "Sep", "Oct", "Nov"],
+        datasets: [
+          {
+            label: "Reviews Count",
+            data: [0, 0, 0, 0, 0, 0],
+            borderColor: "rgb(79, 70, 229)",
+            backgroundColor: "rgba(79, 70, 229, 0.1)",
+            tension: 0.3,
+          },
+        ],
+      };
+    }
+    return {
+      labels: dashboardStats.reviews_timeline.labels,
+      datasets: [
+        {
+          label: "Reviews Count",
+          data: dashboardStats.reviews_timeline.values,
+          borderColor: "rgb(79, 70, 229)",
+          backgroundColor: "rgba(79, 70, 229, 0.1)",
+          tension: 0.3,
+        },
+      ],
+    };
+  };
+
+  const prepareReviewStatusChartData = () => {
+    if (!dashboardStats?.review_status_distribution) {
+      return {
+        labels: ["Pending", "Approved", "Rejected"],
+        datasets: [
+          {
+            label: "Number of Reviews",
+            data: [0, 0, 0],
+            backgroundColor: [
+              "rgba(234,179,8,0.8)",
+              "rgba(34,197,94,0.8)",
+              "rgba(239,68,68,0.8)",
+            ],
+          },
+        ],
+      };
+    }
+    const dist = dashboardStats.review_status_distribution;
+    return {
+      labels: Object.keys(dist),
+      datasets: [
+        {
+          label: "Number of Reviews",
+          data: Object.values(dist),
+          backgroundColor: [
+            "rgba(234,179,8,0.8)",
+            "rgba(34,197,94,0.8)",
+            "rgba(239,68,68,0.8)",
+          ],
+        },
+      ],
+    };
+  };
+
+  const prepareDocumentDistributionChartData = () => {
+    if (!dashboardStats?.document_type_distribution || Object.keys(dashboardStats.document_type_distribution).length === 0) {
+      return {
+        labels: ["No Data"],
+        datasets: [
+          {
+            data: [1],
+            backgroundColor: ["rgba(107, 114, 128, 0.8)"],
+          },
+        ],
+      };
+    }
+    const dist = dashboardStats.document_type_distribution;
+    return {
+      labels: Object.keys(dist),
+      datasets: [
+        {
+          data: Object.values(dist),
+          backgroundColor: [
+            "rgba(79, 70, 229, 0.8)",
+            "rgba(34, 197, 94, 0.8)",
+            "rgba(234, 179, 8, 0.8)",
+            "rgba(239, 68, 68, 0.8)",
+            "rgba(107, 114, 128, 0.8)",
+          ],
+        },
+      ],
+    };
+  };
+
+  const prepareComplianceTrendChartData = () => {
+    if (!dashboardStats?.compliance_trend) {
+      return {
+        labels: ["Jun", "Jul", "Aug", "Sep", "Oct", "Nov"],
+        datasets: [
+          {
+            label: "Compliance Score (%)",
+            data: [0, 0, 0, 0, 0, 0],
+            borderColor: "rgb(34, 197, 94)",
+            backgroundColor: "rgba(34,197,94,0.1)",
+            tension: 0.3,
+          },
+        ],
+      };
+    }
+    return {
+      labels: dashboardStats.compliance_trend.labels,
+      datasets: [
+        {
+          label: "Compliance Score (%)",
+          data: dashboardStats.compliance_trend.values,
+          borderColor: "rgb(34, 197, 94)",
+          backgroundColor: "rgba(34,197,94,0.1)",
+          tension: 0.3,
+        },
+      ],
+    };
+  };
+
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        Loading...
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading dashboard...</p>
+        </div>
       </div>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
-      <div className="flex justify-center items-center h-screen text-red-500">
-        {error}
+      <div className="flex justify-center items-center h-screen">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <button
+            onClick={loadDashboardData}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Retry
+          </button>
+        </div>
       </div>
     );
+  }
 
-  if (!dashboardData) return null;
+  // Prepare metrics from backend data
+  const metrics = dashboardStats ? [
+    {
+      title: "Pending Reviews",
+      value: dashboardStats.pending_reviews?.toString() || "0",
+      trend: -5,
+      color: "yellow",
+      icon: ClockIcon,
+    },
+    {
+      title: "Approved Today",
+      value: dashboardStats.approved_today?.toString() || "0",
+      trend: 4.2,
+      color: "green",
+      icon: CheckCircleIcon,
+    },
+    {
+      title: "Average TAT",
+      value: dashboardStats.average_tat 
+        ? `${dashboardStats.average_tat} days`
+        : "0 days",
+      trend: -8.5,
+      color: "blue",
+      icon: ArrowPathIcon,
+    },
+    {
+      title: "Compliance Score",
+      value: `${dashboardStats.compliance_score || 0}%`,
+      trend: 2.1,
+      color: "green",
+      icon: ShieldCheckIcon,
+    },
+  ] : [];
 
   return (
     <div className="space-y-6 p-6">
@@ -114,7 +289,7 @@ const LegalDashboard = () => {
         </div>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
           <button
-            className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center justify-center gap-2"
             onClick={handleNewReview}
           >
             Create New Review
@@ -129,7 +304,7 @@ const LegalDashboard = () => {
       </div>
 
       {/* Metrics */}
-      <DashboardMetrics items={dashboardData.metrics} />
+      <DashboardMetrics items={metrics} />
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -138,43 +313,15 @@ const LegalDashboard = () => {
           {/* Document Processing Timeline */}
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold mb-4">
-              Document Processing Timeline
+              Reviews Timeline
             </h3>
-            <LineChart
-              data={{
-                labels: ["Jun", "Jul", "Aug", "Sep", "Oct", "Nov"],
-                datasets: [
-                  {
-                    label: "Processing Time (Days)",
-                    data: [1.8, 1.6, 1.5, 1.3, 1.2, 1.2],
-                    borderColor: "rgb(79, 70, 229)",
-                    backgroundColor: "rgba(79, 70, 229, 0.1)",
-                    tension: 0.3,
-                  },
-                ],
-              }}
-            />
+            <LineChart data={prepareTimelineChartData()} />
           </div>
 
-          {/* Review Status (New Section) */}
+          {/* Review Status Distribution */}
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold mb-4">Review Status</h3>
-            <BarChart
-              data={{
-                labels: ["Drafting", "In Negotiation", "Ready for Sign-off"],
-                datasets: [
-                  {
-                    label: "Number of Documents",
-                    data: [12, 7, 5],
-                    backgroundColor: [
-                      "rgba(34,197,94,0.8)",
-                      "rgba(234,179,8,0.8)",
-                      "rgba(79,70,229,0.8)",
-                    ],
-                  },
-                ],
-              }}
-            />
+            <BarChart data={prepareReviewStatusChartData()} />
           </div>
         </div>
 
@@ -185,29 +332,7 @@ const LegalDashboard = () => {
             <h3 className="text-lg font-semibold mb-4">
               Document Distribution
             </h3>
-            <PieChart
-              data={{
-                labels: [
-                  "Loan Agreements",
-                  "Property Papers",
-                  "Collateral Docs",
-                  "Income Proofs",
-                  "Other",
-                ],
-                datasets: [
-                  {
-                    data: [35, 25, 20, 15, 5],
-                    backgroundColor: [
-                      "rgba(79, 70, 229, 0.8)",
-                      "rgba(34, 197, 94, 0.8)",
-                      "rgba(234, 179, 8, 0.8)",
-                      "rgba(239, 68, 68, 0.8)",
-                      "rgba(107, 114, 128, 0.8)",
-                    ],
-                  },
-                ],
-              }}
-            />
+            <PieChart data={prepareDocumentDistributionChartData()} />
           </div>
 
           {/* Compliance Score Trend (New Section) */}
@@ -215,20 +340,7 @@ const LegalDashboard = () => {
             <h3 className="text-lg font-semibold mb-4">
               Compliance Score Trend
             </h3>
-            <LineChart
-              data={{
-                labels: ["Jun", "Jul", "Aug", "Sep", "Oct", "Nov"],
-                datasets: [
-                  {
-                    label: "Compliance Score (%)",
-                    data: [92, 94, 95, 93, 96, 96], // Example trend data
-                    borderColor: "rgb(34, 197, 94)",
-                    backgroundColor: "rgba(34,197,94,0.1)",
-                    tension: 0.3,
-                  },
-                ],
-              }}
-            />
+            <LineChart data={prepareComplianceTrendChartData()} />
           </div>
         </div>
       </div>
@@ -257,7 +369,7 @@ const LegalDashboard = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {dashboardData.recentDocuments.map((doc) => (
+              {recentDocuments.map((doc) => (
                 <tr key={doc.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {doc.id}
@@ -315,7 +427,7 @@ const LegalDashboard = () => {
 
         {/* Mobile Card Layout */}
         <div className="sm:hidden p-4 space-y-4">
-          {dashboardData.recentDocuments.map((doc) => (
+          {recentDocuments.map((doc) => (
             <div
               key={doc.id}
               className="border rounded-lg p-4 shadow-sm bg-white"

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { EnvelopeIcon, ShieldCheckIcon } from "@heroicons/react/24/outline";
+import { register as registerApi } from "../../api/authApi.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +17,7 @@ const SignupPage = () => {
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const primary = {
     50: "#eff6ff",
@@ -28,7 +31,7 @@ const SignupPage = () => {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
@@ -42,22 +45,40 @@ const SignupPage = () => {
     setLoading(true);
 
     try {
-      const usersRaw = localStorage.getItem("mock_users");
-      const users = usersRaw ? JSON.parse(usersRaw) : [];
+      // Call the backend API
+      const response = await registerApi({
+        email: formData.email,
+        password: formData.password,
+        password2: formData.confirmPassword,
+        first_name: formData.name.split(' ')[0] || '',
+        last_name: formData.name.split(' ').slice(1).join(' ') || '',
+        role: formData.role,
+      });
 
-      if (users.find((u) => u.email === formData.email)) {
-        setError("Email already exists.");
-        setLoading(false);
-        return;
-      }
-
-      users.push(formData);
-      localStorage.setItem("mock_users", JSON.stringify(users));
-
+      // Update auth context
+      login(response.user);
+      
       setSuccess("Registration successful! Redirecting...");
-      setTimeout(() => navigate("/login"), 1200);
-    } catch {
-      setError("Something went wrong.");
+      setTimeout(() => navigate(`/${response.user.role}`), 1200);
+    } catch (err) {
+      console.error('Registration error:', err);
+      
+      // Handle different error formats
+      let errorMsg = "Registration failed. Please try again.";
+      
+      if (err.error) {
+        errorMsg = err.error;
+      } else if (err.email) {
+        errorMsg = Array.isArray(err.email) ? err.email[0] : err.email;
+      } else if (err.password) {
+        errorMsg = Array.isArray(err.password) ? err.password[0] : err.password;
+      } else if (typeof err === 'string') {
+        errorMsg = err;
+      } else if (err.message) {
+        errorMsg = err.message;
+      }
+      
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }

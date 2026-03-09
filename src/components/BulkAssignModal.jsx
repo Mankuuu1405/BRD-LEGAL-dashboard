@@ -4,12 +4,8 @@ const BulkAssignModal = ({ isOpen, onClose, agreements, onBulkAssign }) => {
   const [selectedAgreementIds, setSelectedAgreementIds] = useState([]);
   const [assignee, setAssignee] = useState('');
 
-  const legalTeamMembers = [
-    'Priya Mehta',
-    'Rahul Sharma',
-    'Amit Singh',
-    'Sneha Reddy',
-  ];
+  // Match backend ASSIGNEES choices (first names only)
+  const legalTeamMembers = ['Rahul', 'Amit', 'Sneha', 'Priya'];
 
   const handleCheckboxChange = (id) => {
     setSelectedAgreementIds((prevSelected) =>
